@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     //private int damage;
     private float speed;
     private int up,down,left,right;
+    bool collided;
     // Start is called before the first frame update
     void Start()
     {
@@ -50,7 +51,10 @@ public class Player : MonoBehaviour
             down++;
         }
     }
-    public bool hurt(float damageRecieved){
+
+
+    public void hurt(float damageRecieved){
         health-=damageRecieved;
+        
     }
 }
