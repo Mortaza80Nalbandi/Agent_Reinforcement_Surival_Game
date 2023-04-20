@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     public GameObject blockPrefab;
     private float blockCreateRate;
     private Camera MainCamera;
+    IronOre ironOre;
+    private float damage;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,7 +24,8 @@ public class Player : MonoBehaviour
         down = 0;
         left =0 ;
         right = 0;
-        irons = 1000;
+        irons = 10;
+        damage = 5;
         blockCreateRate=0.5f;
         MainCamera = Camera.main;
         MainCamera.enabled = true;
@@ -64,6 +67,14 @@ public class Player : MonoBehaviour
                 makeBlock(blockPos);
             }
         }
+        if(Input.GetKey(KeyCode.E)&& ironOre!=null){
+            ironOre.hurt(damage);
+            if(ironOre.getHardness()<=0){
+                Destroy(ironOre.gameObject);
+                ironOre = null;
+            }
+            
+        }
     }
     private void makeBlock( Vector3 blockPos ){
         if(irons>=5){
@@ -82,6 +93,13 @@ public class Player : MonoBehaviour
         if(other.gameObject.GetComponent<Iron>()!=null ){
             irons++;
             Destroy(other.gameObject);
+        }if(other.gameObject.GetComponent<IronOre>()!=null ){
+            ironOre=other.gameObject.GetComponent<IronOre>();
+        }
+    }
+    private void OnCollisionExit2D(Collision2D other) {
+        if(other.gameObject.GetComponent<IronOre>()!=null ){
+            ironOre=null;
         }
     }
 }
