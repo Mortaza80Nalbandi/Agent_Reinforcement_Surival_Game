@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    //private int health;
+    private float health;
     //private int damage;
     private float speed;
     private int up,down,left,right;
@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         speed = 0.6f;
-        //health = 100;
+        health = 100f;
         //damage = 5;
         up = 0;
         down = 0;
@@ -49,5 +49,8 @@ public class Player : MonoBehaviour
         if(Input.GetKey(KeyCode.S)){
             down++;
         }
+    }
+    public bool hurt(float damageRecieved){
+        health-=damageRecieved;
     }
 }
