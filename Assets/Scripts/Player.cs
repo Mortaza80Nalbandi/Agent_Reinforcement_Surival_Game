@@ -8,7 +8,6 @@ public class Player : MonoBehaviour
     //private int damage;
     private float speed;
     private int up,down,left,right;
-    bool collided;
     // Start is called before the first frame update
     void Start()
     {
