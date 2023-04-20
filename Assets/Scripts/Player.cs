@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     public int irons;
     public GameObject blockPrefab;
     private float blockCreateRate;
+    private Camera MainCamera;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,8 +22,10 @@ public class Player : MonoBehaviour
         down = 0;
         left =0 ;
         right = 0;
-        irons = 10;
+        irons = 1000;
         blockCreateRate=0.5f;
+        MainCamera = Camera.main;
+        MainCamera.enabled = true;
     }
 
     // Update is called once per frame
@@ -54,15 +57,18 @@ public class Player : MonoBehaviour
         if(Input.GetKey(KeyCode.S)){
             down++;
         }
-        if(Input.GetKey(KeyCode.F)){
-            if(blockCreateRate<=0)
-                makeBlock();
+        if (Input.GetButtonDown("Fire1")){
+            if(blockCreateRate<=0){
+                Vector3 blockPos = MainCamera.ScreenToWorldPoint(Input.mousePosition);
+                blockPos.z=0f;
+                makeBlock(blockPos);
+            }
         }
     }
-    private void makeBlock(){
+    private void makeBlock( Vector3 blockPos ){
         if(irons>=5){
             Vector3 move = new Vector3(1,0,0);
-            GameObject block = Instantiate(blockPrefab, transform.position + move, Quaternion.identity);
+            GameObject block = Instantiate(blockPrefab, transform.position  + (blockPos-transform.position)/ Vector3.Distance(blockPos,transform.position), Quaternion.identity);
             irons-=5;
             blockCreateRate = 0.5f;
         }
