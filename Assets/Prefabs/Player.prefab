@@ -231,3 +231,4 @@ MonoBehaviour:
   health: 0
   irons: 0
   blockPrefab: {fileID: 7018936483855201608, guid: 0506e1a27e452ca4bba917aef210e2e0, type: 3}
+  bulletPrefab: {fileID: 325299680528700751, guid: c2766e5abcab17d40a8438ef05c77002, type: 3}

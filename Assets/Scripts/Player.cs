@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     private int up,down,left,right;
     public int irons;
     public GameObject blockPrefab;
+    public GameObject bulletPrefab;
     private float blockCreateRate;
     private Camera MainCamera;
     IronOre ironOre;
@@ -74,12 +75,22 @@ public class Player : MonoBehaviour
                 ironOre = null;
             }
             
+        }if(Input.GetKey(KeyCode.R)){
+            Quaternion q = Quaternion.identity;
+            Vector2 positionOnScreen = MainCamera.WorldToViewportPoint (transform.position);
+            Vector2 mouseOnScreen = (Vector2)MainCamera.ScreenToViewportPoint(Input.mousePosition);
+            float angle = AngleBetweenTwoPoints(positionOnScreen, mouseOnScreen);
+            GameObject bullet = Instantiate(bulletPrefab, transform.position , Quaternion.Euler (new Vector3(0f,0f,angle)));
+            bullet.GetComponent<Rigidbody2D>().AddForce( (MainCamera.ScreenToWorldPoint(Input.mousePosition)-transform.position)*300);
         }
     }
+        private float AngleBetweenTwoPoints(Vector3 a, Vector3 b) {
+         return Mathf.Atan2(a.y - b.y, a.x - b.x) * Mathf.Rad2Deg;
+     }
     private void makeBlock( Vector3 blockPos ){
         if(irons>=5){
             Vector3 move = new Vector3(1,0,0);
-            GameObject block = Instantiate(blockPrefab, transform.position  + (blockPos-transform.position)/ Vector3.Distance(blockPos,transform.position), Quaternion.identity);
+            Instantiate(blockPrefab, transform.position  + (blockPos-transform.position)/ Vector3.Distance(blockPos,transform.position), Quaternion.identity);
             irons-=5;
             blockCreateRate = 0.5f;
         }
