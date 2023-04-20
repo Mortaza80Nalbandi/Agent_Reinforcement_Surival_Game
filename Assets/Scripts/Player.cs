@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
     public float health;
@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     public GameObject blockPrefab;
     public GameObject bulletPrefab;
     private float blockCreateRate;
+    private float fireRate;
     private Camera MainCamera;
     IronOre ironOre;
     private float damage;
@@ -28,8 +29,10 @@ public class Player : MonoBehaviour
         irons = 10;
         damage = 5;
         blockCreateRate=0.5f;
+        fireRate=0.5f;
         MainCamera = Camera.main;
         MainCamera.enabled = true;
+        fireRate = 0.5f;
     }
 
     // Update is called once per frame
@@ -37,6 +40,11 @@ public class Player : MonoBehaviour
     {
         GetInput();
         blockCreateRate-=Time.deltaTime;
+        fireRate-=Time.deltaTime;
+         if (health <= 0)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
     }
     private void FixedUpdate() {
         Vector3 move = new Vector3((right-left)*speed,(up-down)*speed,0);
@@ -69,19 +77,23 @@ public class Player : MonoBehaviour
             }
         }
         if(Input.GetKey(KeyCode.E)&& ironOre!=null){
+            if(blockCreateRate<=0){
             ironOre.hurt(damage);
             if(ironOre.getHardness()<=0){
                 Destroy(ironOre.gameObject);
                 ironOre = null;
             }
+            }
             
         }if(Input.GetKey(KeyCode.R)){
-            Quaternion q = Quaternion.identity;
+            if(fireRate<=0){
             Vector2 positionOnScreen = MainCamera.WorldToViewportPoint (transform.position);
             Vector2 mouseOnScreen = (Vector2)MainCamera.ScreenToViewportPoint(Input.mousePosition);
             float angle = AngleBetweenTwoPoints(positionOnScreen, mouseOnScreen);
             GameObject bullet = Instantiate(bulletPrefab, transform.position , Quaternion.Euler (new Vector3(0f,0f,angle)));
             bullet.GetComponent<Rigidbody2D>().AddForce( (MainCamera.ScreenToWorldPoint(Input.mousePosition)-transform.position)*300);
+            fireRate=0.5f;
+            }
         }
     }
         private float AngleBetweenTwoPoints(Vector3 a, Vector3 b) {

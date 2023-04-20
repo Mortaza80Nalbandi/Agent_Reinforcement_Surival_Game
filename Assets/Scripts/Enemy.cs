@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-     private float health;
+     public float health;
     //private int damage;
     private float speed;
     private Transform target;
@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour
     private float damage;
     private bool attack;
     private float attackRate=3;
+    healthbar healthbarx;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,7 +21,8 @@ public class Enemy : MonoBehaviour
         damage=5;
         player = GameObject.Find("Player").GetComponent<Player>();
          target = player.gameObject.transform;
-        
+        healthbarx = transform.GetChild(0).gameObject.GetComponent<healthbar>();
+        healthbarx.setHealth(health, 100);
     }
 
     // Update is called once per frame
@@ -29,6 +31,10 @@ public class Enemy : MonoBehaviour
         target = player.gameObject.transform;
         attackCheck();
         attackRate-=Time.deltaTime;
+         if (health <= 0)
+        {
+            Destroy(gameObject);
+        }
         
     }
     private void FixedUpdate() {
@@ -47,7 +53,11 @@ public class Enemy : MonoBehaviour
     }
     public void hurt(float damageRecieved){
         health-=damageRecieved;
+        healthbarx.setHealth(health, 100f);
         
+    }
+    public void bulletHit(float damage1){
+        hurt(damage1);
     }
     private void attackCheck(){
         if(attack){
