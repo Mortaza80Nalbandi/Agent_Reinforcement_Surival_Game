@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class healthbar : MonoBehaviour
 {
     // Start is called before the first frame update
-    
+
     public Slider slider;
     public Color low;
     public Color high;
@@ -16,9 +16,10 @@ public class healthbar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       slider.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position + Offset ); 
+        slider.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position + Offset);
     }
-    public void setHealth(float health,float maxHealth){
+    public void setHealth(float health, float maxHealth)
+    {
         slider.gameObject.SetActive(health < maxHealth);
         slider.value = health;
         slider.maxValue = maxHealth;

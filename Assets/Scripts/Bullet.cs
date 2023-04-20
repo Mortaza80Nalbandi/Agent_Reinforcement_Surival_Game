@@ -8,22 +8,29 @@ public class Bullet : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        damage = 5;   
+        damage = 5;
     }
-    
 
-    public float getDamage(){
+
+    public float getDamage()
+    {
         return damage;
     }
-    void OnTriggerEnter2D(Collider2D other) {
-       if(other.gameObject.GetComponent<Block>()!=null){
-           Destroy(gameObject);
-       }else if(other.gameObject.GetComponent<IronOre>()!=null){
-           Destroy(gameObject);
-       }else if(other.gameObject.GetComponent<Enemy>()!=null){
-           other.gameObject.GetComponent<Enemy>().bulletHit(damage);
-           Destroy(gameObject);
-       }
-       Debug.Log("a");
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.GetComponent<Block>() != null)
+        {
+            Destroy(gameObject);
+        }
+        else if (other.gameObject.GetComponent<IronOre>() != null)
+        {
+            Destroy(gameObject);
+        }
+        else if (other.gameObject.GetComponent<Enemy>() != null)
+        {
+            other.gameObject.GetComponent<Enemy>().bulletHit(damage);
+            Destroy(gameObject);
+        }
+        Debug.Log("a");
     }
 }
