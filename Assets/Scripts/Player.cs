@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private float health;
+    public float health;
     //private int damage;
     private float speed;
     private int up,down,left,right;
