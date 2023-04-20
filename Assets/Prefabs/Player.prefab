@@ -228,3 +228,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9ca3cb06c3baf64680cebe2cf9804cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 0
+  irons: 0
+  blockPrefab: {fileID: 7018936483855201608, guid: 0506e1a27e452ca4bba917aef210e2e0, type: 3}

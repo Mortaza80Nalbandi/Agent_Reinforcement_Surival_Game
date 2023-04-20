@@ -8,6 +8,9 @@ public class Player : MonoBehaviour
     //private int damage;
     private float speed;
     private int up,down,left,right;
+    public int irons;
+    public GameObject blockPrefab;
+    private float blockCreateRate;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,13 +21,15 @@ public class Player : MonoBehaviour
         down = 0;
         left =0 ;
         right = 0;
+        irons = 10;
+        blockCreateRate=0.5f;
     }
 
     // Update is called once per frame
     void Update()
     {
         GetInput();
-        
+        blockCreateRate-=Time.deltaTime;
     }
     private void FixedUpdate() {
         Vector3 move = new Vector3((right-left)*speed,(up-down)*speed,0);
@@ -49,11 +54,28 @@ public class Player : MonoBehaviour
         if(Input.GetKey(KeyCode.S)){
             down++;
         }
+        if(Input.GetKey(KeyCode.F)){
+            if(blockCreateRate<=0)
+                makeBlock();
+        }
     }
-
-
+    private void makeBlock(){
+        if(irons>=5){
+            Vector3 move = new Vector3(1,0,0);
+            GameObject block = Instantiate(blockPrefab, transform.position + move, Quaternion.identity);
+            irons-=5;
+            blockCreateRate = 0.5f;
+        }
+        
+    }
     public void hurt(float damageRecieved){
         health-=damageRecieved;
         
+    }
+     private void OnCollisionEnter2D(Collision2D other) {
+        if(other.gameObject.GetComponent<Iron>()!=null ){
+            irons++;
+            Destroy(other.gameObject);
+        }
     }
 }
