@@ -26,31 +26,20 @@ public class Player : MonoBehaviour
     private Enemy enemy;
     private float damage;
     private Weapon weapon;
-    // Start is called before the first frame update
+
     void Start()
     {
         resetMovement();
-        speed = 0.6f;
-        health = 100f;
-        irons = 10;
-        damage = 5;
-        blockCreateRate = 0.5f;
-        fireRate = 0.2f;
-        meeleAttackRate = 0.25f;
-        weapon = Weapon.Gun;
-        MainCamera = Camera.main;
-        MainCamera.enabled = true;
-        enemy = null;
-        ironOre = null;
+        attributeSet();
+        rateSet();
+        EntitySet();
     }
-
-    // Update is called once per frame
     void Update()
     {
         GetInput();
         blockCreateRate -= Time.deltaTime;
         fireRate -= Time.deltaTime;
-        meeleAttackRate-=Time.deltaTime;
+        meeleAttackRate -= Time.deltaTime;
         if (health <= 0)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -64,7 +53,28 @@ public class Player : MonoBehaviour
 
 
     }
-    void resetMovement()
+    private void attributeSet()
+    {
+        speed = 0.6f;
+        health = 100f;
+        irons = 10;
+        damage = 5;
+    }
+    private void rateSet()
+    {
+        blockCreateRate = 0.5f;
+        fireRate = 0.2f;
+        meeleAttackRate = 0.25f;
+    }
+    private void EntitySet()
+    {
+        weapon = Weapon.Gun;
+        MainCamera = Camera.main;
+        MainCamera.enabled = true;
+        enemy = null;
+        ironOre = null;
+    }
+    private void resetMovement()
     {
         up = 0;
         down = 0;
@@ -75,6 +85,11 @@ public class Player : MonoBehaviour
     {
         weaponWheel();
         movementInput();
+        HarvestCHeck();
+        fireButton();
+    }
+    private void HarvestCHeck()
+    {
         if (Input.GetKey(KeyCode.E) && ironOre != null)
         {
             if (meeleAttackRate <= 0)
@@ -87,12 +102,9 @@ public class Player : MonoBehaviour
                 }
                 meeleAttackRate = 0.25f;
             }
-
         }
-        fireButton();
-
     }
-    void fireButton()
+    private void fireButton()
     {
         if (Input.GetButtonDown("Fire1"))
         {
@@ -112,7 +124,7 @@ public class Player : MonoBehaviour
                 makeBlock(blockPos);
                 blockCreateRate = 0.5f;
             }
-            else if (weapon == Weapon.Meele && meeleAttackRate <= 0 && enemy!=null)
+            else if (weapon == Weapon.Meele && meeleAttackRate <= 0 && enemy != null)
             {
                 enemy.hurt(damage);
                 meeleAttackRate = 0.25f;
