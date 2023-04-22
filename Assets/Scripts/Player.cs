@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     public GameObject bulletPrefab;
     private float blockCreateRate;
     private float fireRate;
+    private float meeleAttackRate;
     private Camera MainCamera;
     IronOre ironOre;
     private float damage;
@@ -32,7 +33,8 @@ public class Player : MonoBehaviour
         fireRate = 0.5f;
         MainCamera = Camera.main;
         MainCamera.enabled = true;
-        fireRate = 0.5f;
+        fireRate = 0.2f;
+        meeleAttackRate = 0.25f;
     }
 
     // Update is called once per frame
@@ -59,6 +61,47 @@ public class Player : MonoBehaviour
     }
     private void GetInput()
     {
+        movementInput();
+
+        if (Input.GetKey(KeyCode.E))
+        {
+            if (blockCreateRate <= 0)
+            {
+                Vector3 blockPos = MainCamera.ScreenToWorldPoint(Input.mousePosition);
+                blockPos.z = 0f;
+                makeBlock(blockPos);
+                blockCreateRate = 0.5f;
+            }
+        }
+        if (Input.GetKey(KeyCode.F) && ironOre != null)
+        {
+            if ( meeleAttackRate<= 0)
+            {
+                ironOre.hurt(damage);
+                if (ironOre.getHardness() <= 0)
+                {
+                    Destroy(ironOre.gameObject);
+                    ironOre = null;
+                }
+                meeleAttackRate = 0.25f;
+            }
+
+        }
+        if (Input.GetButtonDown("Fire1"))
+        {
+            if (fireRate <= 0)
+            {
+                Vector2 positionOnScreen = MainCamera.WorldToViewportPoint(transform.position);
+                Vector2 mouseOnScreen = (Vector2)MainCamera.ScreenToViewportPoint(Input.mousePosition);
+                float angle = AngleBetweenTwoPoints(positionOnScreen, mouseOnScreen);
+                GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.Euler(new Vector3(0f, 0f, angle)));
+                bullet.GetComponent<Rigidbody2D>().AddForce((MainCamera.ScreenToWorldPoint(Input.mousePosition) - transform.position) * 300);
+                fireRate = 0.2f;
+            }
+        }
+    }
+    private void movementInput()
+    {
         if (Input.GetKey(KeyCode.A))
         {
             left++;
@@ -74,40 +117,6 @@ public class Player : MonoBehaviour
         if (Input.GetKey(KeyCode.S))
         {
             down++;
-        }
-        if (Input.GetButtonDown("Fire1"))
-        {
-            if (blockCreateRate <= 0)
-            {
-                Vector3 blockPos = MainCamera.ScreenToWorldPoint(Input.mousePosition);
-                blockPos.z = 0f;
-                makeBlock(blockPos);
-            }
-        }
-        if (Input.GetKey(KeyCode.E) && ironOre != null)
-        {
-            if (blockCreateRate <= 0)
-            {
-                ironOre.hurt(damage);
-                if (ironOre.getHardness() <= 0)
-                {
-                    Destroy(ironOre.gameObject);
-                    ironOre = null;
-                }
-            }
-
-        }
-        if (Input.GetKey(KeyCode.R))
-        {
-            if (fireRate <= 0)
-            {
-                Vector2 positionOnScreen = MainCamera.WorldToViewportPoint(transform.position);
-                Vector2 mouseOnScreen = (Vector2)MainCamera.ScreenToViewportPoint(Input.mousePosition);
-                float angle = AngleBetweenTwoPoints(positionOnScreen, mouseOnScreen);
-                GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.Euler(new Vector3(0f, 0f, angle)));
-                bullet.GetComponent<Rigidbody2D>().AddForce((MainCamera.ScreenToWorldPoint(Input.mousePosition) - transform.position) * 300);
-                fireRate = 0.5f;
-            }
         }
     }
     private float AngleBetweenTwoPoints(Vector3 a, Vector3 b)

@@ -30,7 +30,8 @@ public class Bullet : MonoBehaviour
         {
             other.gameObject.GetComponent<Enemy>().bulletHit(damage);
             Destroy(gameObject);
-        }else if (other.gameObject.GetComponent<wall>() != null)
+        }
+        else if (other.gameObject.GetComponent<wall>() != null)
         {
             Destroy(gameObject);
         }
