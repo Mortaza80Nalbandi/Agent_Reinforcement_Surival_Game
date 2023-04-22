@@ -118,7 +118,6 @@ public class Player : MonoBehaviour
     {
         if (irons >= 5)
         {
-            Vector3 move = new Vector3(1, 0, 0);
             Instantiate(blockPrefab, transform.position + (blockPos - transform.position) / Vector3.Distance(blockPos, transform.position), Quaternion.identity);
             irons -= 5;
             blockCreateRate = 0.5f;
