@@ -12,20 +12,29 @@ public class Enemy : MonoBehaviour
     private Player player;
     private float damage;
     private bool attack;
-    private float attackRate = 3;
+    private float attackRate;
     healthbar healthbarx;
-    // Start is called before the first frame update
     void Start()
+    {
+        attributeSet();
+        EntitySet();
+
+    }
+
+    private void attributeSet()
     {
         health = 100f;
         speed = 0.06f;
         damage = 5;
+        attackRate = 3;
+    }
+    private void EntitySet()
+    {
         player = GameObject.Find("Player").GetComponent<Player>();
         target = player.gameObject.transform;
         healthbarx = transform.GetChild(0).gameObject.GetComponent<healthbar>();
         healthbarx.setHealth(health, 100);
     }
-
     // Update is called once per frame
     void Update()
     {
@@ -36,7 +45,8 @@ public class Enemy : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        if(block!=null){
+        if (block != null)
+        {
             block.damage(damage);
         }
 
@@ -51,9 +61,10 @@ public class Enemy : MonoBehaviour
         if (other.gameObject.GetComponent<Player>() != null)
         {
             attack = true;
-        }else if (other.gameObject.GetComponent<Block>() != null)
+        }
+        else if (other.gameObject.GetComponent<Block>() != null)
         {
-            block =other.gameObject.GetComponent<Block>();
+            block = other.gameObject.GetComponent<Block>();
         }
     }
     private void OnCollisionExit2D(Collision2D other)
@@ -61,9 +72,10 @@ public class Enemy : MonoBehaviour
         if (other.gameObject.GetComponent<Player>() != null)
         {
             attack = false;
-        }else if (other.gameObject.GetComponent<Block>() != null)
+        }
+        else if (other.gameObject.GetComponent<Block>() != null)
         {
-            block =null;
+            block = null;
         }
     }
     public void hurt(float damageRecieved)
