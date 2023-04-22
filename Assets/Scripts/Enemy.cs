@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
     public float health;
     //private int damage;
     private float speed;
+    private Block block;
     private Transform target;
     private Player player;
     private float damage;
@@ -35,6 +36,9 @@ public class Enemy : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        if(block!=null){
+            block.damage(damage);
+        }
 
     }
     private void FixedUpdate()
@@ -47,6 +51,9 @@ public class Enemy : MonoBehaviour
         if (other.gameObject.GetComponent<Player>() != null)
         {
             attack = true;
+        }else if (other.gameObject.GetComponent<Block>() != null)
+        {
+            block =other.gameObject.GetComponent<Block>();
         }
     }
     private void OnCollisionExit2D(Collision2D other)
@@ -54,6 +61,9 @@ public class Enemy : MonoBehaviour
         if (other.gameObject.GetComponent<Player>() != null)
         {
             attack = false;
+        }else if (other.gameObject.GetComponent<Block>() != null)
+        {
+            block =null;
         }
     }
     public void hurt(float damageRecieved)

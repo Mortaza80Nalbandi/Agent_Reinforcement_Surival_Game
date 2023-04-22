@@ -4,5 +4,11 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
+    private float hardness=2;
+    public void damage(float damage){
+        hardness-= damage;
+        if(hardness<=0)
+                Destroy(gameObject);
+    }
 
 }
