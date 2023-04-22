@@ -4,6 +4,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
+    enum Weapon
+    {
+        Gun,
+        Meele,
+        Block
+    }
+
     public float health;
     //private int damage;
     private float speed;
@@ -15,26 +22,26 @@ public class Player : MonoBehaviour
     private float fireRate;
     private float meeleAttackRate;
     private Camera MainCamera;
-    IronOre ironOre;
+    private IronOre ironOre;
+    private Enemy enemy;
     private float damage;
+    private Weapon weapon;
     // Start is called before the first frame update
     void Start()
     {
+        resetMovement();
         speed = 0.6f;
         health = 100f;
-        //damage = 5;
-        up = 0;
-        down = 0;
-        left = 0;
-        right = 0;
         irons = 10;
         damage = 5;
         blockCreateRate = 0.5f;
-        fireRate = 0.5f;
-        MainCamera = Camera.main;
-        MainCamera.enabled = true;
         fireRate = 0.2f;
         meeleAttackRate = 0.25f;
+        weapon = Weapon.Gun;
+        MainCamera = Camera.main;
+        MainCamera.enabled = true;
+        enemy = null;
+        ironOre = null;
     }
 
     // Update is called once per frame
@@ -43,6 +50,7 @@ public class Player : MonoBehaviour
         GetInput();
         blockCreateRate -= Time.deltaTime;
         fireRate -= Time.deltaTime;
+        meeleAttackRate-=Time.deltaTime;
         if (health <= 0)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -52,30 +60,24 @@ public class Player : MonoBehaviour
     {
         Vector3 move = new Vector3((right - left) * speed, (up - down) * speed, 0);
         GetComponent<Rigidbody2D>().MovePosition(transform.position + move * Time.deltaTime);
+        resetMovement();
+
+
+    }
+    void resetMovement()
+    {
         up = 0;
         down = 0;
         left = 0;
         right = 0;
-
-
     }
     private void GetInput()
     {
+        weaponWheel();
         movementInput();
-
-        if (Input.GetKey(KeyCode.E))
+        if (Input.GetKey(KeyCode.E) && ironOre != null)
         {
-            if (blockCreateRate <= 0)
-            {
-                Vector3 blockPos = MainCamera.ScreenToWorldPoint(Input.mousePosition);
-                blockPos.z = 0f;
-                makeBlock(blockPos);
-                blockCreateRate = 0.5f;
-            }
-        }
-        if (Input.GetKey(KeyCode.F) && ironOre != null)
-        {
-            if ( meeleAttackRate<= 0)
+            if (meeleAttackRate <= 0)
             {
                 ironOre.hurt(damage);
                 if (ironOre.getHardness() <= 0)
@@ -87,9 +89,14 @@ public class Player : MonoBehaviour
             }
 
         }
+        fireButton();
+
+    }
+    void fireButton()
+    {
         if (Input.GetButtonDown("Fire1"))
         {
-            if (fireRate <= 0)
+            if (weapon == Weapon.Gun && fireRate <= 0)
             {
                 Vector2 positionOnScreen = MainCamera.WorldToViewportPoint(transform.position);
                 Vector2 mouseOnScreen = (Vector2)MainCamera.ScreenToViewportPoint(Input.mousePosition);
@@ -97,6 +104,18 @@ public class Player : MonoBehaviour
                 GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.Euler(new Vector3(0f, 0f, angle)));
                 bullet.GetComponent<Rigidbody2D>().AddForce((MainCamera.ScreenToWorldPoint(Input.mousePosition) - transform.position) * 300);
                 fireRate = 0.2f;
+            }
+            else if (weapon == Weapon.Block && blockCreateRate <= 0)
+            {
+                Vector3 blockPos = MainCamera.ScreenToWorldPoint(Input.mousePosition);
+                blockPos.z = 0f;
+                makeBlock(blockPos);
+                blockCreateRate = 0.5f;
+            }
+            else if (weapon == Weapon.Meele && meeleAttackRate <= 0 && enemy!=null)
+            {
+                enemy.hurt(damage);
+                meeleAttackRate = 0.25f;
             }
         }
     }
@@ -118,6 +137,15 @@ public class Player : MonoBehaviour
         {
             down++;
         }
+    }
+    void weaponWheel()
+    {
+        if (Input.GetKey(KeyCode.Alpha1))
+            weapon = Weapon.Gun;
+        else if (Input.GetKey(KeyCode.Alpha2))
+            weapon = Weapon.Meele;
+        else if (Input.GetKey(KeyCode.Alpha3))
+            weapon = Weapon.Block;
     }
     private float AngleBetweenTwoPoints(Vector3 a, Vector3 b)
     {
@@ -145,9 +173,13 @@ public class Player : MonoBehaviour
             irons++;
             Destroy(other.gameObject);
         }
-        if (other.gameObject.GetComponent<IronOre>() != null)
+        else if (other.gameObject.GetComponent<IronOre>() != null)
         {
             ironOre = other.gameObject.GetComponent<IronOre>();
+        }
+        else if (other.gameObject.GetComponent<Enemy>() != null)
+        {
+            enemy = other.gameObject.GetComponent<Enemy>();
         }
     }
     private void OnCollisionExit2D(Collision2D other)
@@ -155,6 +187,10 @@ public class Player : MonoBehaviour
         if (other.gameObject.GetComponent<IronOre>() != null)
         {
             ironOre = null;
+        }
+        else if (other.gameObject.GetComponent<Enemy>() != null)
+        {
+            enemy = null;
         }
     }
 }
