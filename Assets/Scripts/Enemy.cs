@@ -7,17 +7,18 @@ public class Enemy : MonoBehaviour
     private float health;
     private float shield;
     private float speed;
-    private Block block;
-    private Transform target;
-    private Player player;
+
     private float damage;
     private bool attack;
     private float attackRate;
     private int irons;
+    
     private Random rnd;
-
-    healthbar healthbarx;
-    healthbar sheildbar;
+    private Block block;
+    private Transform target;
+    private Player player;
+    private healthbar healthbarx;
+    private healthbar sheildbar;
     void Start()
     {
         attributeSet();
@@ -111,7 +112,7 @@ public class Enemy : MonoBehaviour
     }
     public void hurt(float damageRecieved)
     {
-        if (rnd.Next(0, 100)<80)
+        if (rnd.Next(0, 100) < 80)
             if (shield <= 0)
             {
                 health -= damageRecieved;
