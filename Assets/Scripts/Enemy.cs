@@ -10,11 +10,12 @@ public class Enemy : MonoBehaviour
     private Block block;
     private Transform target;
     private Player player;
-    private float damage;
+    public float damage;
     private bool attack;
     private float attackRate;
     private int irons;
     healthbar healthbarx;
+    healthbar sheildbar;
     void Start()
     {
         attributeSet();
@@ -36,7 +37,9 @@ public class Enemy : MonoBehaviour
         player = GameObject.Find("Player").GetComponent<Player>();
         target = player.gameObject.transform;
         healthbarx = transform.GetChild(0).gameObject.GetComponent<healthbar>();
+        sheildbar= transform.GetChild(1).gameObject.GetComponent<healthbar>();
         healthbarx.setHealth(health, 100);
+        sheildbar.setHealth(shield, 100);
     }
     // Update is called once per frame
     void Update()
@@ -89,6 +92,7 @@ public class Enemy : MonoBehaviour
         else if (other.gameObject.GetComponent<Iron>() != null)
         {
             irons++;
+            Destroy(other.gameObject);
         }
     }
     private void OnCollisionExit2D(Collision2D other)
@@ -104,8 +108,17 @@ public class Enemy : MonoBehaviour
     }
     public void hurt(float damageRecieved)
     {
-        health -= damageRecieved;
-        healthbarx.setHealth(health, 100f);
+        if (shield <= 0)
+        {
+            health -= damageRecieved;
+            healthbarx.setHealth(health, 100f);
+        }
+        else
+        {
+            shield -= damageRecieved;
+            sheildbar.setHealth(shield, 100);
+        }
+
 
     }
     public void bulletHit(float damage1)
