@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public float health;
-    //private int damage;
+    private float health;
+    private float shield;
     private float speed;
     private Block block;
     private Transform target;
@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
     private float damage;
     private bool attack;
     private float attackRate;
+    private int irons;
     healthbar healthbarx;
     void Start()
     {
@@ -24,9 +25,11 @@ public class Enemy : MonoBehaviour
     private void attributeSet()
     {
         health = 100f;
+        shield=100f;
         speed = 0.06f;
         damage = 5;
         attackRate = 3;
+        irons = 0;
     }
     private void EntitySet()
     {
@@ -49,12 +52,18 @@ public class Enemy : MonoBehaviour
         {
             block.damage(damage);
         }
+        if(irons>=5){
+            ironManage();
+        }
 
     }
     private void FixedUpdate()
     {
         if (!attack)
             GetComponent<Rigidbody2D>().MovePosition(Vector3.MoveTowards(transform.position, target.position, speed));
+    }
+    private void ironManage(){
+        if
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -65,6 +74,9 @@ public class Enemy : MonoBehaviour
         else if (other.gameObject.GetComponent<Block>() != null)
         {
             block = other.gameObject.GetComponent<Block>();
+        }else if (other.gameObject.GetComponent<Iron>() != null)
+        {
+            irons++;
         }
     }
     private void OnCollisionExit2D(Collision2D other)
