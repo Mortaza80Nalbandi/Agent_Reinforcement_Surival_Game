@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Random = System.Random;
 public class Enemy : MonoBehaviour
 {
     private float health;
@@ -10,10 +10,12 @@ public class Enemy : MonoBehaviour
     private Block block;
     private Transform target;
     private Player player;
-    public float damage;
+    private float damage;
     private bool attack;
     private float attackRate;
     private int irons;
+    private Random rnd;
+
     healthbar healthbarx;
     healthbar sheildbar;
     void Start()
@@ -37,9 +39,10 @@ public class Enemy : MonoBehaviour
         player = GameObject.Find("Player").GetComponent<Player>();
         target = player.gameObject.transform;
         healthbarx = transform.GetChild(0).gameObject.GetComponent<healthbar>();
-        sheildbar= transform.GetChild(1).gameObject.GetComponent<healthbar>();
+        sheildbar = transform.GetChild(1).gameObject.GetComponent<healthbar>();
         healthbarx.setHealth(health, 100);
         sheildbar.setHealth(shield, 100);
+        rnd = new Random();
     }
     // Update is called once per frame
     void Update()
@@ -108,16 +111,19 @@ public class Enemy : MonoBehaviour
     }
     public void hurt(float damageRecieved)
     {
-        if (shield <= 0)
-        {
-            health -= damageRecieved;
-            healthbarx.setHealth(health, 100f);
-        }
+        if (rnd.Next(0, 100)<80)
+            if (shield <= 0)
+            {
+                health -= damageRecieved;
+                healthbarx.setHealth(health, 100f);
+            }
+            else
+            {
+                shield -= damageRecieved;
+                sheildbar.setHealth(shield, 100);
+            }
         else
-        {
-            shield -= damageRecieved;
-            sheildbar.setHealth(shield, 100);
-        }
+            Debug.Log("Dodged attack");
 
 
     }
