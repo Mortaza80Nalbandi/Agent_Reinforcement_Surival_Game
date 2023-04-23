@@ -25,7 +25,7 @@ public class Enemy : MonoBehaviour
     private void attributeSet()
     {
         health = 100f;
-        shield=100f;
+        shield = 100f;
         speed = 0.06f;
         damage = 5;
         attackRate = 3;
@@ -52,7 +52,8 @@ public class Enemy : MonoBehaviour
         {
             block.damage(damage);
         }
-        if(irons>=5){
+        if (irons >= 5)
+        {
             ironManage();
         }
 
@@ -62,8 +63,18 @@ public class Enemy : MonoBehaviour
         if (!attack)
             GetComponent<Rigidbody2D>().MovePosition(Vector3.MoveTowards(transform.position, target.position, speed));
     }
-    private void ironManage(){
-        if
+    private void ironManage()
+    {
+        if (irons > 5 && shield <= 50)
+        {
+            shield = 100f;
+            irons -= 5;
+        }
+        else if (irons > 5)
+        {
+            damage += 5;
+            irons -= 5;
+        }
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -74,7 +85,8 @@ public class Enemy : MonoBehaviour
         else if (other.gameObject.GetComponent<Block>() != null)
         {
             block = other.gameObject.GetComponent<Block>();
-        }else if (other.gameObject.GetComponent<Iron>() != null)
+        }
+        else if (other.gameObject.GetComponent<Iron>() != null)
         {
             irons++;
         }
