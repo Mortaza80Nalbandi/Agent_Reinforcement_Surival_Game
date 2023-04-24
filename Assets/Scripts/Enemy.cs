@@ -4,6 +4,18 @@ using UnityEngine;
 using Random = System.Random;
 public class Enemy : MonoBehaviour
 {
+    enum Obstacle
+    {
+        Player,
+        Iron,
+        Block
+    }
+    enum Action
+    {
+        Hit,
+        Recieve,
+        dodge
+    }
     private float health;
     private float shield;
     private float speed;
@@ -12,13 +24,14 @@ public class Enemy : MonoBehaviour
     private bool attack;
     private float attackRate;
     private int irons;
-    
+
     private Random rnd;
     private Block block;
     private Transform target;
     private Player player;
     private healthbar healthbarx;
     private healthbar sheildbar;
+    private Dictionary<Obstacle, string> bestAction = new Dictionary<Obstacle, string>();
     void Start()
     {
         attributeSet();
@@ -142,5 +155,33 @@ public class Enemy : MonoBehaviour
                 attackRate = 3;
             }
         }
+    }
+    private Action costSetter(Obstacles obstacle)
+    {
+        if (obstacle == Obstacles.Block)
+        {
+            if (bestAction.ContainsKey(obstacle))
+            {
+                return bestAction[Obstacles.Block];
+            }
+        }
+        else if (obstacle == Obstacles.Player)
+        {
+            if (bestAction.ContainsKey(obstacle))
+            {
+                return bestAction[Obstacles.Player];
+            }
+        }
+        else if (obstacle == Obstacles.Iron)
+        {
+            if (bestAction.ContainsKey(obstacle))
+            {
+                return bestAction[Obstacles.Iron];
+            }
+        }
+    }
+    private float costBlock(Action action)
+    {
+        return 0f;
     }
 }

@@ -12,7 +12,6 @@ public class Player : MonoBehaviour
     }
 
     public float health;
-    //private int damage;
     private float speed;
     private int up, down, left, right;
     public int irons;
