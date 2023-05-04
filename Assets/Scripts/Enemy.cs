@@ -165,8 +165,6 @@ public class Enemy : MonoBehaviour
                 shield -= damageRecieved;
                 sheildbar.setHealth(shield, 100);
             }
-
-
     }
     public void bulletHit(float damage1)
     {
@@ -216,6 +214,7 @@ public class Enemy : MonoBehaviour
         int reward = 0f;
         foreach (Action action in actions)
         {
+            if(actionsLearnt.ContainsKey(Obstacle.Block))
             int x = costBlock(action);
             if (x > reward)
                 reward = x;
