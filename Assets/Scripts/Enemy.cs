@@ -33,7 +33,7 @@ public class Enemy : MonoBehaviour
     private healthbar healthbarx;
     private healthbar sheildbar;
     private Dictionary<Obstacle, Action> bestAction = new Dictionary<Obstacle, Action>();
-    private Dictionary<Obstacle, List<Action>> actionsLearnt = new Dictionary<Obstacle, List<Action>>();
+    private Dictionary<Obstacle, Dictionary<Action,int>> actionsLearnt = new Dictionary<Obstacle,  Dictionary<Action,int>>();
     private Action[] actions;
     void Start()
     {
@@ -109,28 +109,29 @@ public class Enemy : MonoBehaviour
         {
             //Action action = costSetter(Obstacle.Player);
             //if (action != null)
-              //  callFunc(action);
+            //  callFunc(action);
             attack = true;
         }
         else if (other.gameObject.GetComponent<Block>() != null)
         {
             //Action action = costSetter(Obstacle.Block);
             //if (action != null)
-              //  callFunc(action);
+            //  callFunc(action);
             block = other.gameObject.GetComponent<Block>();
         }
         else if (other.gameObject.GetComponent<Iron>() != null)
         {
             //Action action = costSetter(Obstacle.Iron);
             //if (action != null)
-              //  callFunc(action);
+            //  callFunc(action);
             irons++;
             Destroy(other.gameObject);
-        }else if (other.gameObject.GetComponent<Bullet>() != null)
+        }
+        else if (other.gameObject.GetComponent<Bullet>() != null)
         {
             //Action action = costSetter(Obstacle.Bullet);
             //if (action != null)
-              //  callFunc(action);
+            //  callFunc(action);
             bulletHit(other.gameObject.GetComponent<Bullet>().getDamage());
             Destroy(other.gameObject);
         }
@@ -146,25 +147,28 @@ public class Enemy : MonoBehaviour
             block = null;
         }
     }
-    private void dodge(float damageRecieved){
-        if (rnd.Next(0, 100) < 80){
-            hurt( damageRecieved);
-        }else
+    private void dodge(float damageRecieved)
+    {
+        if (rnd.Next(0, 100) < 80)
+        {
+            hurt(damageRecieved);
+        }
+        else
             Debug.Log("Dodged attack");
     }
     public void hurt(float damageRecieved)
     {
 
-            if (shield <= 0)
-            {
-                health -= damageRecieved;
-                healthbarx.setHealth(health, 100f);
-            }
-            else
-            {
-                shield -= damageRecieved;
-                sheildbar.setHealth(shield, 100);
-            }
+        if (shield <= 0)
+        {
+            health -= damageRecieved;
+            healthbarx.setHealth(health, 100f);
+        }
+        else
+        {
+            shield -= damageRecieved;
+            sheildbar.setHealth(shield, 100);
+        }
     }
     public void bulletHit(float damage1)
     {
@@ -214,10 +218,16 @@ public class Enemy : MonoBehaviour
         int reward = 0f;
         foreach (Action action in actions)
         {
-            if(actionsLearnt.ContainsKey(Obstacle.Block))
-            int x = costBlock(action);
-            if (x > reward)
-                reward = x;
+            if (actionsLearnt.TryGetValue(Obstacle.Block, out result))
+            {
+                if (!result.Contains(action))
+                {
+                    int x = costBlock(action);
+                    if (x > reward)
+                        reward = x;
+                    result.Add(action)
+                }
+            }
         }
 
         return reward;
@@ -299,7 +309,8 @@ public class Enemy : MonoBehaviour
         } // jump -5f
         return reward;
     }
-    private int HitCost(Obstacle obstacle){
+    private int HitCost(Obstacle obstacle)
+    {
         return 0;
     }
     private
