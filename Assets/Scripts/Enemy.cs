@@ -8,7 +8,8 @@ public class Enemy : MonoBehaviour
     {
         Player,
         Iron,
-        Block
+        Block,
+        Bullet
     }
     enum Action
     {
@@ -32,6 +33,7 @@ public class Enemy : MonoBehaviour
     private healthbar healthbarx;
     private healthbar sheildbar;
     private Dictionary<Obstacle, Action> bestAction = new Dictionary<Obstacle, Action>();
+    private Dictionary<Obstacle, List<Action>> actionsLearnt = new Dictionary<Obstacle, List<Action>>();
     private Action[] actions;
     void Start()
     {
@@ -112,14 +114,24 @@ public class Enemy : MonoBehaviour
         }
         else if (other.gameObject.GetComponent<Block>() != null)
         {
-            //Action action = costSetter(Obstacle.Player);
+            //Action action = costSetter(Obstacle.Block);
             //if (action != null)
               //  callFunc(action);
             block = other.gameObject.GetComponent<Block>();
         }
         else if (other.gameObject.GetComponent<Iron>() != null)
         {
+            //Action action = costSetter(Obstacle.Iron);
+            //if (action != null)
+              //  callFunc(action);
             irons++;
+            Destroy(other.gameObject);
+        }else if (other.gameObject.GetComponent<Bullet>() != null)
+        {
+            //Action action = costSetter(Obstacle.Bullet);
+            //if (action != null)
+              //  callFunc(action);
+            bulletHit(other.gameObject.GetComponent<Bullet>().getDamage());
             Destroy(other.gameObject);
         }
     }
@@ -284,4 +296,8 @@ public class Enemy : MonoBehaviour
         } // jump -5f
         return reward;
     }
+    private int HitCost(Obstacle obstacle){
+        return 0;
+    }
+    private
 }

@@ -26,11 +26,6 @@ public class Bullet : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        else if (other.gameObject.GetComponent<Enemy>() != null)
-        {
-            other.gameObject.GetComponent<Enemy>().bulletHit(damage);
-            Destroy(gameObject);
-        }
         else if (other.gameObject.GetComponent<wall>() != null)
         {
             Destroy(gameObject);
