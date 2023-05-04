@@ -146,9 +146,15 @@ public class Enemy : MonoBehaviour
             block = null;
         }
     }
+    private void dodge(float damageRecieved){
+        if (rnd.Next(0, 100) < 80){
+            hurt( damageRecieved);
+        }else
+            Debug.Log("Dodged attack");
+    }
     public void hurt(float damageRecieved)
     {
-        if (rnd.Next(0, 100) < 80)
+
             if (shield <= 0)
             {
                 health -= damageRecieved;
@@ -159,8 +165,6 @@ public class Enemy : MonoBehaviour
                 shield -= damageRecieved;
                 sheildbar.setHealth(shield, 100);
             }
-        else
-            Debug.Log("Dodged attack");
 
 
     }
