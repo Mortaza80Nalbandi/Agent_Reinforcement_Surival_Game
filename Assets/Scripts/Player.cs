@@ -56,7 +56,7 @@ public class Player : MonoBehaviour
     {
         speed = 0.6f;
         health = 100f;
-        irons = 10;
+        irons = 1000;
         damage = 5;
     }
     private void rateSet()

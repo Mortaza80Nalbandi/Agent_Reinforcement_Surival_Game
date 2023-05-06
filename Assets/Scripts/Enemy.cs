@@ -110,18 +110,18 @@ public class Enemy : MonoBehaviour
         }
         else if (other.gameObject.GetComponent<Block>() != null)
         {
-            //Action action = costSetter(Obstacle.Block);
+            Action action = costSetter(Obstacle.Block, other.gameObject);
             //if (action != null)
             //  callFunc(action);
-            block = other.gameObject.GetComponent<Block>();
+            //block = other.gameObject.GetComponent<Block>();
         }
         else if (other.gameObject.GetComponent<Iron>() != null)
         {
-            //Action action = costSetter(Obstacle.Iron);
+            Action action = costSetter(Obstacle.Iron,other.gameObject);
             //if (action != null)
             //  callFunc(action);
-            irons++;
-            Destroy(other.gameObject);
+            //irons++;
+            //Destroy(other.gameObject);
         }
         else if (other.gameObject.GetComponent<Bullet>() != null)
         {
@@ -183,29 +183,51 @@ public class Enemy : MonoBehaviour
     }
     private Action costSetter(Obstacle obstacle, GameObject gameObject)
     {
+        print("aa");
         if (bestAction.ContainsKey(obstacle))
         {
+            print(bestAction[obstacle]);
             return bestAction[obstacle];
         }
         else
         {
-            bestAction.Add(obstacle, costAll(obstacle, gameObject));
+            print("cc");
+            costAll(obstacle, gameObject);
         }
         return Action.Hit;
     }
-    private Action costAll(Obstacle obstacle, GameObject gameObject)
+    private void costAll(Obstacle obstacle, GameObject gameObject)
     {
-        if (actionsLearnt.ContainsKey(obstacle))
-            foreach (Action action in actions)
+        if (!actionsLearnt.ContainsKey(obstacle))
+        {
+            Dictionary<Action, int> x = new Dictionary<Action, int>();
+            actionsLearnt.Add(obstacle, x);
+        }
+        foreach (Action action in actions)
+        {
+            if (!actionsLearnt[obstacle].ContainsKey(action))
             {
-                if (!actionsLearnt[obstacle].ContainsKey(action))
-                {
-                    if(Learn(obstacle, gameObject, action))
+                if (!Learn(obstacle, gameObject, action))
                     break;
-                }
             }
-
-        return best;
+        }
+        Action best = Action.Dodge;
+        int y =-10;
+        int i=0;
+        foreach (Action action in actions)
+        {
+            if (actionsLearnt[obstacle].ContainsKey(action))
+            {
+                if (actionsLearnt[obstacle][action]>y)
+                    best = action;
+                    y = actionsLearnt[obstacle][action];
+                    i++;
+                print(obstacle + " "+action + " " +actionsLearnt[obstacle][action]);
+            }
+        }
+        if(i==3){
+            bestAction.Add(obstacle,best);
+        }
     }
     private bool Learn(Obstacle obstacle, GameObject gameObject, Action action)
     {
@@ -213,11 +235,12 @@ public class Enemy : MonoBehaviour
         {
             if (gameObject.GetComponent<Block>().learnable)
             {
-                Dictionary<Action, int> x = new Dictionary<Action, int>();
+                Dictionary<Action, int> x = actionsLearnt[obstacle];
                 x.Add(action, gameObject.GetComponent<Block>().costCalculator(action));
-                actionsLearnt.Add(obstacle, x);
-                
-            }else {
+
+            }
+            else
+            {
                 return false;
             }
 
@@ -228,7 +251,16 @@ public class Enemy : MonoBehaviour
         }
         else if (obstacle == Obstacle.Iron)
         {
+            if (gameObject.GetComponent<Iron>().learnable)
+            {
+                Dictionary<Action, int> x = actionsLearnt[obstacle];
+                x.Add(action, gameObject.GetComponent<Iron>().costCalculator(action));
 
+            }
+            else
+            {
+                return false;
+            }
         }
         else if (obstacle == Obstacle.Bullet)
         {

@@ -18,7 +18,7 @@ public class Block : MonoBehaviour
  
     public int costCalculator(Action action){
         if(action == Action.Hit){
-            damage(1);
+            damage(100);
             return H_type*5;
         }else if(action == Action.Recieve){
             return R_type*5;
