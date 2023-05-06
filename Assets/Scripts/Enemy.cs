@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
         Block,
         Bullet
     }
-    
+
     private float health;
     private float shield;
     private float speed;
@@ -29,7 +29,7 @@ public class Enemy : MonoBehaviour
     private healthbar healthbarx;
     private healthbar sheildbar;
     private Dictionary<Obstacle, Action> bestAction = new Dictionary<Obstacle, Action>();
-    private Dictionary<Obstacle, Dictionary<Action,int>> actionsLearnt = new Dictionary<Obstacle,  Dictionary<Action,int>>();
+    private Dictionary<Obstacle, Dictionary<Action, int>> actionsLearnt = new Dictionary<Obstacle, Dictionary<Action, int>>();
     private Action[] actions;
     void Start()
     {
@@ -181,7 +181,7 @@ public class Enemy : MonoBehaviour
             }
         }
     }
-    private Action costSetter(Obstacle obstacle)
+    private Action costSetter(Obstacle obstacle, GameObject gameObject)
     {
         if (bestAction.ContainsKey(obstacle))
         {
@@ -189,14 +189,51 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            bestAction.Add(obstacle, costAll(obstacle));
+            bestAction.Add(obstacle, costAll(obstacle, gameObject));
         }
-        return null;
+        return Action.Hit;
     }
-    private Action costAll(Obstacle obstacle)
+    private Action costAll(Obstacle obstacle, GameObject gameObject)
     {
-        float reward = 0f;
-        
-        return null;
+        if (actionsLearnt.ContainsKey(obstacle))
+            foreach (Action action in actions)
+            {
+                if (!actionsLearnt[obstacle].ContainsKey(action))
+                {
+                    if(Learn(obstacle, gameObject, action))
+                    break;
+                }
+            }
+
+        return best;
+    }
+    private bool Learn(Obstacle obstacle, GameObject gameObject, Action action)
+    {
+        if (obstacle == Obstacle.Block)
+        {
+            if (gameObject.GetComponent<Block>().learnable)
+            {
+                Dictionary<Action, int> x = new Dictionary<Action, int>();
+                x.Add(action, gameObject.GetComponent<Block>().costCalculator(action));
+                actionsLearnt.Add(obstacle, x);
+                
+            }else {
+                return false;
+            }
+
+        }
+        else if (obstacle == Obstacle.Player)
+        {
+
+        }
+        else if (obstacle == Obstacle.Iron)
+        {
+
+        }
+        else if (obstacle == Obstacle.Bullet)
+        {
+
+        }
+        return true;
     }
 }
