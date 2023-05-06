@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
+using Actions;
 public class Enemy : MonoBehaviour
 {
     enum Obstacle
@@ -11,12 +12,7 @@ public class Enemy : MonoBehaviour
         Block,
         Bullet
     }
-    enum Action
-    {
-        Hit,
-        Recieve,
-        dodge
-    }
+    
     private float health;
     private float shield;
     private float speed;
@@ -41,7 +37,7 @@ public class Enemy : MonoBehaviour
         EntitySet();
         actions = new Action[3];
         actions[0] = Action.Hit;
-        actions[1] = Action.dodge;
+        actions[1] = Action.Dodge;
         actions[2] = Action.Recieve;
 
     }
@@ -185,7 +181,7 @@ public class Enemy : MonoBehaviour
             }
         }
     }
-    private Action costSetter(Obstacles obstacle)
+    private Action costSetter(Obstacle obstacle)
     {
         if (bestAction.ContainsKey(obstacle))
         {
@@ -195,123 +191,12 @@ public class Enemy : MonoBehaviour
         {
             bestAction.Add(obstacle, costAll(obstacle));
         }
+        return null;
     }
-    private float costAll(Obstacle obstacle)
+    private Action costAll(Obstacle obstacle)
     {
         float reward = 0f;
-        if (obstacle == Obstacle.Block)
-        {
-            reward = costBlockAll();
-        }
-        else if (obstacle == Obstacle.Iron)
-        {
-            reward = costIronAll();
-        }
-        else if (obstacle == Obstacle.Player)
-        {
-            reward = costPlayerAll();
-        }
-        return reward;
+        
+        return null;
     }
-    private float costBlockAll()
-    {
-        int reward = 0f;
-        foreach (Action action in actions)
-        {
-            if (actionsLearnt.TryGetValue(Obstacle.Block, out result))
-            {
-                if (!result.Contains(action))
-                {
-                    int x = costBlock(action);
-                    if (x > reward)
-                        reward = x;
-                    result.Add(action)
-                }
-            }
-        }
-
-        return reward;
-    }
-    private float costBlock(Action action)
-    {
-        float reward = 0f;
-        if (action == Action.Hit)
-        {
-            reward = 5f;
-        }
-        else if (action == Action.Recieve)
-        {
-            reward = -5f;
-        }
-        else if (action == Action.dodge)
-        {
-            reward = 0f;
-        } // jump 10f
-        return reward;
-    }
-
-    private float costIronAll()
-    {
-        int reward = 0f;
-        foreach (Action action in actions)
-        {
-            int x = costIron(action);
-            if (x > reward)
-                reward = x;
-        }
-
-        return reward;
-    }
-    private float costIron(Action action)
-    {
-        float reward = 0f;
-        if (action == Action.Hit)
-        {
-            reward = -5f;
-        }
-        else if (action == Action.Recieve)
-        {
-            reward = 10f;
-        }
-        else if (action == Action.dodge)
-        {
-            reward = 0f;
-        } // jump 5f
-        return reward;
-    }
-
-    private float costPlayerAll()
-    {
-        int reward = 0f;
-        foreach (Action action in actions)
-        {
-            int x = costPlayer(action);
-            if (x > reward)
-                reward = x;
-        }
-
-        return reward;
-    }
-    private float costPlayer(Action action)
-    {
-        float reward = 0f;
-        if (action == Action.Hit)
-        {
-            reward = 10f;
-        }
-        else if (action == Action.Recieve)
-        {
-            reward = -5f;
-        }
-        else if (action == Action.dodge)
-        {
-            reward = 0f;
-        } // jump -5f
-        return reward;
-    }
-    private int HitCost(Obstacle obstacle)
-    {
-        return 0;
-    }
-    private
 }
