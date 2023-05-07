@@ -103,7 +103,7 @@ public class Enemy : MonoBehaviour
     {
         if (other.gameObject.GetComponent<Player>() != null)
         {
-            Action action = costSetter(Obstacle.Player,other.gameObject);
+            Action action = costSetter(Obstacle.Player, other.gameObject);
             //if (action != null)
             //  callFunc(action);
             //attack = true;
@@ -158,7 +158,6 @@ public class Enemy : MonoBehaviour
     }
     public void hurt(float damageRecieved)
     {
-
         if (shield <= 0)
         {
             health -= damageRecieved;
@@ -190,7 +189,7 @@ public class Enemy : MonoBehaviour
         print("aa");
         if (bestAction.ContainsKey(obstacle))
         {
-            print(obstacle+ " : "+ bestAction[obstacle]);
+            print(obstacle + " : " + bestAction[obstacle]);
             return bestAction[obstacle];
         }
         else
@@ -200,6 +199,7 @@ public class Enemy : MonoBehaviour
         }
         return Action.Hit;
     }
+
     private void costAll(Obstacle obstacle, GameObject gameObject)
     {
         if (!actionsLearnt.ContainsKey(obstacle))
@@ -287,4 +287,5 @@ public class Enemy : MonoBehaviour
         }
         return true;
     }
+    hitManager(Obstacle obstacle,GameObject gameObject)
 }
