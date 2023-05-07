@@ -9,7 +9,7 @@ public class Iron : MonoBehaviour
     private int H_type=-1;
     private int D_type=0;
     public bool learnable = true;
-    public void damage(){
+    public void destroy(){
         learnable=false;
         Destroy(gameObject);
     }

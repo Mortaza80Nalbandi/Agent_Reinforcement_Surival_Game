@@ -10,7 +10,8 @@ public class Enemy : MonoBehaviour
         Player,
         Iron,
         Block,
-        Bullet
+        Bullet,
+        Null
     }
 
     private float health;
@@ -101,9 +102,11 @@ public class Enemy : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
-        Action action ;
+        Action action = Action.Null;
+        Obstacle obstacle = Obstacle.Null;
         if (other.gameObject.GetComponent<Player>() != null)
         {
+            obstacle = Obstacle.Player;
             action = costSetter(Obstacle.Player, other.gameObject);
             //if (action != null)
             //  callFunc(action);
@@ -111,6 +114,7 @@ public class Enemy : MonoBehaviour
         }
         else if (other.gameObject.GetComponent<Block>() != null)
         {
+            obstacle = Obstacle.Block;
             action = costSetter(Obstacle.Block, other.gameObject);
             //if (action != null)
             //  callFunc(action);
@@ -118,6 +122,7 @@ public class Enemy : MonoBehaviour
         }
         else if (other.gameObject.GetComponent<Iron>() != null)
         {
+            obstacle = Obstacle.Iron;
             action = costSetter(Obstacle.Iron, other.gameObject);
             //if (action != null)
             //  callFunc(action);
@@ -132,6 +137,7 @@ public class Enemy : MonoBehaviour
         if (other.gameObject.GetComponent<Bullet>() != null)
         {
             Action action = costSetter(Obstacle.Bullet, other.gameObject);
+            actionManager(Obstacle.Bullet,other.gameObject,action);
             //if (action != null)
             //  callFunc(action);
             //bulletHit(other.gameObject.GetComponent<Bullet>().getDamage());
@@ -195,12 +201,11 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            costAll(obstacle, gameObject);
+            return costAll(obstacle, gameObject);
         }
-        return Action.Hit;
     }
 
-    private void costAll(Obstacle obstacle, GameObject gameObject)
+    private Action costAll(Obstacle obstacle, GameObject gameObject)
     {
         if (!actionsLearnt.ContainsKey(obstacle))
         {
@@ -233,6 +238,7 @@ public class Enemy : MonoBehaviour
         {
             bestAction.Add(obstacle, best);
         }
+        return best;
     }
     private bool Learn(Obstacle obstacle, GameObject gameObject, Action action)
     {
@@ -302,7 +308,7 @@ public class Enemy : MonoBehaviour
         }else if(obstacle == Obstacle.Block){
             gameObject.GetComponent<Block>().damage(damage);
         }else if(obstacle == Obstacle.Iron){
-            gameObject.GetComponent<Iron>().damage(damage);
+            gameObject.GetComponent<Iron>().destroy();
         }else if(obstacle == Obstacle.Bullet){
             //NOTHING IS DONE here
         }
@@ -310,9 +316,15 @@ public class Enemy : MonoBehaviour
     private void dodgeManager(Obstacle obstacle,GameObject gameObject){
         //hello
         int x =0;
+        if(x==0){
+            print("x = 0");
+        }
     }
     private void RecieveManager(Obstacle obstacle,GameObject gameObject){
         //hello
         int x=1;
+        if(x==1){
+            print("x = 1");
+        }
     }
 }

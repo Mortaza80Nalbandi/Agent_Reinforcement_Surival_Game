@@ -4,6 +4,7 @@ namespace Actions
     {
         Hit,
         Recieve,
-        Dodge
+        Dodge,
+        Null
     }
 }
