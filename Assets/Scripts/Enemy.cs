@@ -101,28 +101,30 @@ public class Enemy : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
+        Action action ;
         if (other.gameObject.GetComponent<Player>() != null)
         {
-            Action action = costSetter(Obstacle.Player, other.gameObject);
+            action = costSetter(Obstacle.Player, other.gameObject);
             //if (action != null)
             //  callFunc(action);
             //attack = true;
         }
         else if (other.gameObject.GetComponent<Block>() != null)
         {
-            Action action = costSetter(Obstacle.Block, other.gameObject);
+            action = costSetter(Obstacle.Block, other.gameObject);
             //if (action != null)
             //  callFunc(action);
             //block = other.gameObject.GetComponent<Block>();
         }
         else if (other.gameObject.GetComponent<Iron>() != null)
         {
-            Action action = costSetter(Obstacle.Iron, other.gameObject);
+            action = costSetter(Obstacle.Iron, other.gameObject);
             //if (action != null)
             //  callFunc(action);
             //irons++;
             //Destroy(other.gameObject);
         }
+        actionManager(obstacle,other.gameObject,action);
 
     }
     private void OnTriggerEnter2D(Collider2D other)
@@ -186,7 +188,6 @@ public class Enemy : MonoBehaviour
     }
     private Action costSetter(Obstacle obstacle, GameObject gameObject)
     {
-        print("aa");
         if (bestAction.ContainsKey(obstacle))
         {
             print(obstacle + " : " + bestAction[obstacle]);
@@ -194,7 +195,6 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            print("cc");
             costAll(obstacle, gameObject);
         }
         return Action.Hit;
@@ -287,8 +287,14 @@ public class Enemy : MonoBehaviour
         }
         return true;
     }
-    private void actionManager(Obstacle obstacle,GameObject gameObject){
-
+    private void actionManager(Obstacle obstacle,GameObject gameObject,Action action){
+        if(action ==Action.Hit){
+            hitManager(obstacle,gameObject);
+        }else if(action ==Action.Dodge){
+            dodgeManager(obstacle,gameObject);
+        }else if(action ==Action.Recieve){
+            RecieveManager(obstacle,gameObject);
+        }
     }
     private void hitManager(Obstacle obstacle,GameObject gameObject){
         if(obstacle == Obstacle.Player){
@@ -300,5 +306,13 @@ public class Enemy : MonoBehaviour
         }else if(obstacle == Obstacle.Bullet){
             //NOTHING IS DONE here
         }
+    }
+    private void dodgeManager(Obstacle obstacle,GameObject gameObject){
+        //hello
+        int x =0;
+    }
+    private void RecieveManager(Obstacle obstacle,GameObject gameObject){
+        //hello
+        int x=1;
     }
 }
