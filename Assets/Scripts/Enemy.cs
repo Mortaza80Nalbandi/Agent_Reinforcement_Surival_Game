@@ -287,5 +287,18 @@ public class Enemy : MonoBehaviour
         }
         return true;
     }
-    hitManager(Obstacle obstacle,GameObject gameObject)
+    private void actionManager(Obstacle obstacle,GameObject gameObject){
+
+    }
+    private void hitManager(Obstacle obstacle,GameObject gameObject){
+        if(obstacle == Obstacle.Player){
+            gameObject.GetComponent<Player>().hurt(damage);
+        }else if(obstacle == Obstacle.Block){
+            gameObject.GetComponent<Block>().damage(damage);
+        }else if(obstacle == Obstacle.Iron){
+            gameObject.GetComponent<Iron>().damage(damage);
+        }else if(obstacle == Obstacle.Bullet){
+            //NOTHING IS DONE here
+        }
+    }
 }
