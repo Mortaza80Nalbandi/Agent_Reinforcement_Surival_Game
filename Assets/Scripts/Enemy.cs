@@ -46,7 +46,7 @@ public class Enemy : MonoBehaviour
     {
         health = 100f;
         shield = 100f;
-        speed = 0.06f;
+        speed = 0.02f;
         damage = 5;
         attackRate = 3;
         irons = 0;
@@ -103,10 +103,10 @@ public class Enemy : MonoBehaviour
     {
         if (other.gameObject.GetComponent<Player>() != null)
         {
-            //Action action = costSetter(Obstacle.Player);
+            Action action = costSetter(Obstacle.Player,other.gameObject);
             //if (action != null)
             //  callFunc(action);
-            attack = true;
+            //attack = true;
         }
         else if (other.gameObject.GetComponent<Block>() != null)
         {
@@ -117,19 +117,23 @@ public class Enemy : MonoBehaviour
         }
         else if (other.gameObject.GetComponent<Iron>() != null)
         {
-            Action action = costSetter(Obstacle.Iron,other.gameObject);
+            Action action = costSetter(Obstacle.Iron, other.gameObject);
             //if (action != null)
             //  callFunc(action);
             //irons++;
             //Destroy(other.gameObject);
         }
-        else if (other.gameObject.GetComponent<Bullet>() != null)
+
+    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.GetComponent<Bullet>() != null)
         {
-            //Action action = costSetter(Obstacle.Bullet);
+            Action action = costSetter(Obstacle.Bullet, other.gameObject);
             //if (action != null)
             //  callFunc(action);
-            bulletHit(other.gameObject.GetComponent<Bullet>().getDamage());
-            Destroy(other.gameObject);
+            //bulletHit(other.gameObject.GetComponent<Bullet>().getDamage());
+            //Destroy(other.gameObject);
         }
     }
     private void OnCollisionExit2D(Collision2D other)
@@ -186,7 +190,7 @@ public class Enemy : MonoBehaviour
         print("aa");
         if (bestAction.ContainsKey(obstacle))
         {
-            print(bestAction[obstacle]);
+            print(obstacle+ " : "+ bestAction[obstacle]);
             return bestAction[obstacle];
         }
         else
@@ -212,21 +216,22 @@ public class Enemy : MonoBehaviour
             }
         }
         Action best = Action.Dodge;
-        int y =-10;
-        int i=0;
+        int y = -10;
+        int i = 0;
         foreach (Action action in actions)
         {
             if (actionsLearnt[obstacle].ContainsKey(action))
             {
-                if (actionsLearnt[obstacle][action]>y)
+                if (actionsLearnt[obstacle][action] > y)
                     best = action;
-                    y = actionsLearnt[obstacle][action];
-                    i++;
-                print(obstacle + " "+action + " " +actionsLearnt[obstacle][action]);
+                y = actionsLearnt[obstacle][action];
+                i++;
+                print(obstacle + " " + action + " " + actionsLearnt[obstacle][action]);
             }
         }
-        if(i==3){
-            bestAction.Add(obstacle,best);
+        if (i == 3)
+        {
+            bestAction.Add(obstacle, best);
         }
     }
     private bool Learn(Obstacle obstacle, GameObject gameObject, Action action)
@@ -237,7 +242,6 @@ public class Enemy : MonoBehaviour
             {
                 Dictionary<Action, int> x = actionsLearnt[obstacle];
                 x.Add(action, gameObject.GetComponent<Block>().costCalculator(action));
-
             }
             else
             {
@@ -247,7 +251,15 @@ public class Enemy : MonoBehaviour
         }
         else if (obstacle == Obstacle.Player)
         {
-
+            if (gameObject.GetComponent<Player>().learnable)
+            {
+                Dictionary<Action, int> x = actionsLearnt[obstacle];
+                x.Add(action, gameObject.GetComponent<Player>().costCalculator(action));
+            }
+            else
+            {
+                return false;
+            }
         }
         else if (obstacle == Obstacle.Iron)
         {
@@ -255,7 +267,6 @@ public class Enemy : MonoBehaviour
             {
                 Dictionary<Action, int> x = actionsLearnt[obstacle];
                 x.Add(action, gameObject.GetComponent<Iron>().costCalculator(action));
-
             }
             else
             {
@@ -264,7 +275,15 @@ public class Enemy : MonoBehaviour
         }
         else if (obstacle == Obstacle.Bullet)
         {
-
+            if (gameObject.GetComponent<Bullet>().learnable)
+            {
+                Dictionary<Action, int> x = actionsLearnt[obstacle];
+                x.Add(action, gameObject.GetComponent<Bullet>().costCalculator(action));
+            }
+            else
+            {
+                return false;
+            }
         }
         return true;
     }
