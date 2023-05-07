@@ -129,7 +129,7 @@ public class Enemy : MonoBehaviour
             //irons++;
             //Destroy(other.gameObject);
         }
-        actionManager(obstacle,other.gameObject,action);
+        actionManager(obstacle, other.gameObject, action);
 
     }
     private void OnTriggerEnter2D(Collider2D other)
@@ -137,7 +137,7 @@ public class Enemy : MonoBehaviour
         if (other.gameObject.GetComponent<Bullet>() != null)
         {
             Action action = costSetter(Obstacle.Bullet, other.gameObject);
-            actionManager(Obstacle.Bullet,other.gameObject,action);
+            actionManager(Obstacle.Bullet, other.gameObject, action);
             //if (action != null)
             //  callFunc(action);
             //bulletHit(other.gameObject.GetComponent<Bullet>().getDamage());
@@ -218,6 +218,7 @@ public class Enemy : MonoBehaviour
             {
                 if (!Learn(obstacle, gameObject, action))
                     break;
+                actionManager(obstacle, gameObject, action);
             }
         }
         Action best = Action.Dodge;
@@ -293,38 +294,80 @@ public class Enemy : MonoBehaviour
         }
         return true;
     }
-    private void actionManager(Obstacle obstacle,GameObject gameObject,Action action){
-        if(action ==Action.Hit){
-            hitManager(obstacle,gameObject);
-        }else if(action ==Action.Dodge){
-            dodgeManager(obstacle,gameObject);
-        }else if(action ==Action.Recieve){
-            RecieveManager(obstacle,gameObject);
+    private void actionManager(Obstacle obstacle, GameObject gameObject, Action action)
+    {
+        if (action == Action.Hit)
+        {
+            hitManager(obstacle, gameObject);
+        }
+        else if (action == Action.Dodge)
+        {
+            dodgeManager(obstacle, gameObject);
+        }
+        else if (action == Action.Recieve)
+        {
+            RecieveManager(obstacle, gameObject);
         }
     }
-    private void hitManager(Obstacle obstacle,GameObject gameObject){
-        if(obstacle == Obstacle.Player){
-            gameObject.GetComponent<Player>().hurt(damage);
-        }else if(obstacle == Obstacle.Block){
+    private void hitManager(Obstacle obstacle, GameObject gameObject)
+    {
+        if (obstacle == Obstacle.Player)
+        {
+            attack = true;
+        }
+        else if (obstacle == Obstacle.Block)
+        {
             gameObject.GetComponent<Block>().damage(damage);
-        }else if(obstacle == Obstacle.Iron){
+        }
+        else if (obstacle == Obstacle.Iron)
+        {
             gameObject.GetComponent<Iron>().destroy();
-        }else if(obstacle == Obstacle.Bullet){
+        }
+        else if (obstacle == Obstacle.Bullet)
+        {
             //NOTHING IS DONE here
         }
     }
-    private void dodgeManager(Obstacle obstacle,GameObject gameObject){
-        //hello
-        int x =0;
-        if(x==0){
-            print("x = 0");
+    private void dodgeManager(Obstacle obstacle, GameObject gameObject)
+    {
+        if (obstacle == Obstacle.Player)
+        {
+            //NOTHING IS DONE here
+        }
+        else if (obstacle == Obstacle.Block)
+        {
+            //NOTHING IS DONE here
+        }
+        else if (obstacle == Obstacle.Iron)
+        {
+            //NOTHING IS DONE here
+        }
+        else if (obstacle == Obstacle.Bullet)
+        {
+            dodge(gameObject.GetComponent<Bullet>().getDamage());
+            gameObject.GetComponent<Bullet>().learnable = false;
+            Destroy(gameObject);
         }
     }
-    private void RecieveManager(Obstacle obstacle,GameObject gameObject){
-        //hello
-        int x=1;
-        if(x==1){
-            print("x = 1");
+    private void RecieveManager(Obstacle obstacle, GameObject gameObject)
+    {
+        if (obstacle == Obstacle.Player)
+        {
+            //NOTHING IS DONE here
+        }
+        else if (obstacle == Obstacle.Block)
+        {
+            //NOTHING IS DONE here
+        }
+        else if (obstacle == Obstacle.Iron)
+        {
+            irons++;
+            gameObject.GetComponent<Iron>().destroy();
+        }
+        else if (obstacle == Obstacle.Bullet)
+        {
+            hurt(gameObject.GetComponent<Bullet>().getDamage() * 3);
+            gameObject.GetComponent<Bullet>().destroy();
         }
     }
 }
