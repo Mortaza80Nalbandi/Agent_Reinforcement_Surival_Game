@@ -11,7 +11,7 @@ public class EnemySpawn : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rate = 100;
+        rate = 10;
         rnd = new Random();
     }
 

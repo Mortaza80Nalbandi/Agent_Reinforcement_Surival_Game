@@ -59,9 +59,9 @@ public class Player : MonoBehaviour
     }
     private void attributeSet()
     {
-        speed = 6f;
+        speed = 1f;
         health = 100f;
-        irons = 1000;
+        irons = 10;
         damage = 5;
     }
     private void rateSet()

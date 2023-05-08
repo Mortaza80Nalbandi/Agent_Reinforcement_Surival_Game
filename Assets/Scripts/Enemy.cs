@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour
 
     private float damage;
     private bool attack;
+    private bool attackBlock;
     private float attackRate;
     private int irons;
 
@@ -71,10 +72,6 @@ public class Enemy : MonoBehaviour
         if (health <= 0)
         {
             Destroy(gameObject);
-        }
-        if (block != null)
-        {
-            block.damage(damage);
         }
         if (irons >= 5)
         {
@@ -153,6 +150,7 @@ public class Enemy : MonoBehaviour
         else if (other.gameObject.GetComponent<Block>() != null)
         {
             block = null;
+            attackBlock = false;
         }
     }
     private void dodge(float damageRecieved)
@@ -189,6 +187,20 @@ public class Enemy : MonoBehaviour
             {
                 player.hurt(damage);
                 attackRate = 3;
+            }
+        } else if(attackBlock){
+            if (attackRate <= 0)
+            {
+                if(block.getHardness()<=damage){
+                    block.damage(damage);
+                    block=null;
+                }else{
+                    block.damage(damage);
+                }
+                
+                attackRate = 1;
+                print("block attack" );
+                
             }
         }
     }
@@ -317,7 +329,9 @@ public class Enemy : MonoBehaviour
         }
         else if (obstacle == Obstacle.Block)
         {
-            gameObject.GetComponent<Block>().damage(damage);
+            attackBlock=true;
+            block = gameObject.GetComponent<Block>();
+            block.damage(damage);
         }
         else if (obstacle == Obstacle.Iron)
         {
