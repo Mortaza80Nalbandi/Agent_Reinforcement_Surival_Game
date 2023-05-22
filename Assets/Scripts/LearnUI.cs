@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class LearnAI : MonoBehaviour
+public class LearnUI : MonoBehaviour
 {
     public Text text;
     public Vector3 Offset;
@@ -15,5 +15,8 @@ public class LearnAI : MonoBehaviour
     void Update()
     {
         text.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position + Offset);
+    }
+    public void setText(string x){
+        text.text = x;
     }
 }

@@ -31,7 +31,7 @@ public class Enemy : MonoBehaviour
     private Player player;
     private healthbar healthbarx;
     private healthbar sheildbar;
-    private Text learnUI;
+    private LearnUI learnUI;
     private Dictionary<Obstacle, Action> bestAction = new Dictionary<Obstacle, Action>();
     private Dictionary<Obstacle, Dictionary<Action, int>> actionsLearnt = new Dictionary<Obstacle, Dictionary<Action, int>>();
     private Action[] actions;
@@ -53,6 +53,7 @@ public class Enemy : MonoBehaviour
         speed = 0.02f;
         damage = 5;
         attackRate = 3;
+        
         irons = 0;
     }
     private void EntitySet()
@@ -61,7 +62,7 @@ public class Enemy : MonoBehaviour
         target = player.gameObject.transform;
         healthbarx = transform.GetChild(0).gameObject.GetComponent<healthbar>();
         sheildbar = transform.GetChild(1).gameObject.GetComponent<healthbar>();
-        learnUI = transform.GetChild(2).gameObject.GetComponent<Text>();
+        learnUI = transform.GetChild(2).gameObject.GetComponent<LearnUI>();
         healthbarx.setHealth(health, 100);
         sheildbar.setHealth(shield, 100);
         rnd = new Random();
@@ -248,6 +249,7 @@ public class Enemy : MonoBehaviour
         {
             if (gameObject.GetComponent<Block>().learnable)
             {
+                learnUI.setText("Learning" + obstacle );
                 Dictionary<Action, int> x = actionsLearnt[obstacle];
                 x.Add(action, gameObject.GetComponent<Block>().costCalculator(action));
             }
