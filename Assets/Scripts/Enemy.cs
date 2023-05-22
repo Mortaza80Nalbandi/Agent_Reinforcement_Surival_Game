@@ -105,26 +105,16 @@ public class Enemy : MonoBehaviour
         {
             obstacle = Obstacle.Player;
             action = costSetter(Obstacle.Player, other.gameObject);
-            //if (action != null)
-            //  callFunc(action);
-            //attack = true;
         }
         else if (other.gameObject.GetComponent<Block>() != null)
         {
             obstacle = Obstacle.Block;
             action = costSetter(Obstacle.Block, other.gameObject);
-            //if (action != null)
-            //  callFunc(action);
-            //block = other.gameObject.GetComponent<Block>();
         }
         else if (other.gameObject.GetComponent<Iron>() != null)
         {
             obstacle = Obstacle.Iron;
             action = costSetter(Obstacle.Iron, other.gameObject);
-            //if (action != null)
-            //  callFunc(action);
-            //irons++;
-            //Destroy(other.gameObject);
         }
         actionManager(obstacle, other.gameObject, action);
 
@@ -135,10 +125,6 @@ public class Enemy : MonoBehaviour
         {
             Action action = costSetter(Obstacle.Bullet, other.gameObject);
             actionManager(Obstacle.Bullet, other.gameObject, action);
-            //if (action != null)
-            //  callFunc(action);
-            //bulletHit(other.gameObject.GetComponent<Bullet>().getDamage());
-            //Destroy(other.gameObject);
         }
     }
     private void OnCollisionExit2D(Collision2D other)
@@ -189,7 +175,7 @@ public class Enemy : MonoBehaviour
                 attackRate = 3;
             }
         } else if(attackBlock){
-            if (attackRate <= 0)
+            if (attackRate <= 0 && block !=null)
             {
                 if(block.getHardness()<=damage){
                     block.damage(damage);
