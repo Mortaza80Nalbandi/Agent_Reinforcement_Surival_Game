@@ -53,7 +53,7 @@ public class Enemy : MonoBehaviour
         speed = 0.02f;
         damage = 5;
         attackRate = 3;
-        
+
         irons = 0;
     }
     private void EntitySet()
@@ -211,6 +211,7 @@ public class Enemy : MonoBehaviour
     {
         if (!actionsLearnt.ContainsKey(obstacle))
         {
+           
             Dictionary<Action, int> x = new Dictionary<Action, int>();
             actionsLearnt.Add(obstacle, x);
         }
@@ -218,6 +219,7 @@ public class Enemy : MonoBehaviour
         {
             if (!actionsLearnt[obstacle].ContainsKey(action))
             {
+                 learnUI.setText("Learning about" + obstacle + "Action :" +action );
                 if (!Learn(obstacle, gameObject, action))
                     break;
                 actionManager(obstacle, gameObject, action);
@@ -249,7 +251,7 @@ public class Enemy : MonoBehaviour
         {
             if (gameObject.GetComponent<Block>().learnable)
             {
-                learnUI.setText("Learning" + obstacle );
+                
                 Dictionary<Action, int> x = actionsLearnt[obstacle];
                 x.Add(action, gameObject.GetComponent<Block>().costCalculator(action));
             }
