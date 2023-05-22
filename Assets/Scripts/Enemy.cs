@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = System.Random;
 using Actions;
 public class Enemy : MonoBehaviour
@@ -30,6 +31,7 @@ public class Enemy : MonoBehaviour
     private Player player;
     private healthbar healthbarx;
     private healthbar sheildbar;
+    private Text learnUI;
     private Dictionary<Obstacle, Action> bestAction = new Dictionary<Obstacle, Action>();
     private Dictionary<Obstacle, Dictionary<Action, int>> actionsLearnt = new Dictionary<Obstacle, Dictionary<Action, int>>();
     private Action[] actions;
@@ -59,6 +61,7 @@ public class Enemy : MonoBehaviour
         target = player.gameObject.transform;
         healthbarx = transform.GetChild(0).gameObject.GetComponent<healthbar>();
         sheildbar = transform.GetChild(1).gameObject.GetComponent<healthbar>();
+        learnUI = transform.GetChild(2).gameObject.GetComponent<Text>();
         healthbarx.setHealth(health, 100);
         sheildbar.setHealth(shield, 100);
         rnd = new Random();
