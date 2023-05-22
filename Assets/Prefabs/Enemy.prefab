@@ -271,11 +271,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 867129858}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90b6e6045f8d4ae41a6757a920ce8afc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bbc2578c0c2abf468b4a9c994a64d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 984318066}
-  Offset: {x: 0, y: 3, z: 0}
+  Offset: {x: 1, y: 2, z: 0}
 --- !u!1 &984318064
 GameObject:
   m_ObjectHideFlags: 0
@@ -351,8 +351,8 @@ MonoBehaviour:
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: aaa
 --- !u!1 &1271863685
