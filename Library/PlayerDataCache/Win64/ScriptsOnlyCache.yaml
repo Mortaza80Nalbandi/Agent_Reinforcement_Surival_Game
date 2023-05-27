@@ -8,13 +8,16 @@ ScriptsOnlyBuild:
     - Iron
     - IronOre
     - IronOreSpawn
+    - LearnUI
     - Player
     - healthbar
+    - playerUI
     - wall
     Unity.2D.Animation.Editor.dll:
     - UnityEditor.U2D.Animation.BoneGizmo
     Unity.2D.IK.Editor.dll:
     - UnityEditor.U2D.IK.IKEditorManager
+    - UnityEditor.U2D.IK.IKGizmos
     Unity.2D.IK.Runtime.dll:
     - UnityEditor.U2D.IK.IKEditorManagerHelper
     Unity.2D.Tilemap.Editor.dll:
@@ -38,8 +41,9 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.GraphicRaycaster
     - UnityEngine.UI.Image
     - UnityEngine.UI.Slider
+    - UnityEngine.UI.Text
   sceneClasses:
-    Assets/Scenes/SampleScene.unity:
+    Assets/BaseScene.unity:
     - Class: 1
       Script: {instanceID: 0}
     - Class: 4
@@ -63,7 +67,9 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1508}
+      Script: {instanceID: 1506}
+    - Class: 114
+      Script: {instanceID: 1530}
     - Class: 114
       Script: {instanceID: 1672}
     - Class: 114
@@ -71,30 +77,36 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 1884}
     - Class: 114
-      Script: {instanceID: 2616}
+      Script: {instanceID: 2204}
     - Class: 114
-      Script: {instanceID: 2756}
+      Script: {instanceID: 2618}
     - Class: 114
-      Script: {instanceID: 2778}
+      Script: {instanceID: 2758}
     - Class: 114
-      Script: {instanceID: 2994}
+      Script: {instanceID: 2780}
     - Class: 114
-      Script: {instanceID: 3146}
+      Script: {instanceID: 2996}
     - Class: 114
-      Script: {instanceID: 3238}
+      Script: {instanceID: 3148}
     - Class: 114
-      Script: {instanceID: 3722}
+      Script: {instanceID: 3240}
     - Class: 114
-      Script: {instanceID: 4552}
+      Script: {instanceID: 3724}
     - Class: 114
-      Script: {instanceID: 4712}
+      Script: {instanceID: 4554}
     - Class: 114
-      Script: {instanceID: 4910}
+      Script: {instanceID: 4714}
     - Class: 114
-      Script: {instanceID: 5542}
+      Script: {instanceID: 4912}
     - Class: 114
-      Script: {instanceID: 5574}
+      Script: {instanceID: 5544}
+    - Class: 114
+      Script: {instanceID: 5576}
+    - Class: 114
+      Script: {instanceID: 17368}
     - Class: 115
+      Script: {instanceID: 0}
+    - Class: 128
       Script: {instanceID: 0}
     - Class: 157
       Script: {instanceID: 0}
@@ -123,6 +135,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: Image
+  - hash:
+      serializedVersion: 2
+      Hash: 348b2dfb58cf81384824d085a7007370
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: LearnUI
   - hash:
       serializedVersion: 2
       Hash: 77aaaaa51f7a8d8ff333a879741e47d2
@@ -203,7 +221,7 @@ ScriptsOnlyBuild:
     className: TMP_FontAsset
   - hash:
       serializedVersion: 2
-      Hash: 9e415627bdc2b133803d855947c88217
+      Hash: 11fc7c49245a67d6e2a5ab2d11813962
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Player
@@ -419,7 +437,7 @@ ScriptsOnlyBuild:
     className: PlayableTrack
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+      Hash: 81b40d6b4105a581bf5d0cda17ee78ac
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Block
@@ -563,7 +581,7 @@ ScriptsOnlyBuild:
     className: ScrollRect
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+      Hash: 81b40d6b4105a581bf5d0cda17ee78ac
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Iron
@@ -593,7 +611,7 @@ ScriptsOnlyBuild:
     className: TMP_Settings
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+      Hash: 81b40d6b4105a581bf5d0cda17ee78ac
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Bullet
@@ -687,7 +705,13 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: IronOreSpawn
+  - hash:
+      serializedVersion: 2
+      Hash: 348b2dfb58cf81384824d085a7007370
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: playerUI
   platform: 19
   scenePathNames:
-  - Assets/Scenes/SampleScene.unity
-  playerPath: D:/Games/AI Phase1/Survivor-AI.exe
+  - Assets/BaseScene.unity
+  playerPath: D:/Games/AI Phase 3/Survivor-AI.exe
