@@ -12,7 +12,8 @@ public class LearnUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        i=0;
+        i = 0;
+        y="";
     }
 
     // Update is called once per frame
@@ -20,13 +21,15 @@ public class LearnUI : MonoBehaviour
     {
         text.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position + Offset);
     }
-    public void addText(string x){
+    public void addText(string x)
+    {
         y = y + x + "\n";
         text.text = y;
         i++;
-        if(i>=5){
-            y="";
-            i=0;
+        if (i >= 5)
+        {
+            y = "";
+            i = 0;
         }
     }
 }

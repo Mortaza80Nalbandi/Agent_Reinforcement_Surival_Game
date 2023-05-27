@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
 {
     enum Weapon
     {
-        Gun,
+        Bow,
         Meele,
         Block
     }
@@ -31,12 +31,16 @@ public class Player : MonoBehaviour
     private int H_type = 2;
     private int D_type = 1;
     public bool learnable = true;
+    private playerUI pui;
+    private healthbar healthbarx;
+    private int score;
     void Start()
     {
         resetMovement();
+        EntitySet();
         attributeSet();
         rateSet();
-        EntitySet();
+
     }
     void Update()
     {
@@ -57,12 +61,19 @@ public class Player : MonoBehaviour
 
 
     }
+    public void updateScore(int increase)
+    {
+        score += increase;
+        pui.updateScore(score);
+    }
     private void attributeSet()
     {
         speed = 1f;
         health = 100f;
         irons = 10;
         damage = 5;
+        pui.updateIron(irons);
+        score = 0;
     }
     private void rateSet()
     {
@@ -72,8 +83,11 @@ public class Player : MonoBehaviour
     }
     private void EntitySet()
     {
-        weapon = Weapon.Gun;
+        weapon = Weapon.Bow;
         MainCamera = Camera.main;
+        healthbarx = transform.GetChild(1).gameObject.GetComponent<healthbar>();
+        healthbarx.setHealth(health, 100);
+        pui = transform.GetChild(2).gameObject.GetComponent<playerUI>();
         MainCamera.enabled = true;
         enemy = null;
         ironOre = null;
@@ -112,7 +126,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetButtonDown("Fire1"))
         {
-            if (weapon == Weapon.Gun && fireRate <= 0)
+            if (weapon == Weapon.Bow && fireRate <= 0)
             {
                 Vector2 positionOnScreen = MainCamera.WorldToViewportPoint(transform.position);
                 Vector2 mouseOnScreen = (Vector2)MainCamera.ScreenToViewportPoint(Input.mousePosition);
@@ -157,11 +171,13 @@ public class Player : MonoBehaviour
     void weaponWheel()
     {
         if (Input.GetKey(KeyCode.Alpha1))
-            weapon = Weapon.Gun;
+            weapon = Weapon.Bow;
         else if (Input.GetKey(KeyCode.Alpha2))
             weapon = Weapon.Meele;
         else if (Input.GetKey(KeyCode.Alpha3))
             weapon = Weapon.Block;
+        string x = "" + weapon;
+        pui.updateWeapon(x);
     }
     private float AngleBetweenTwoPoints(Vector3 a, Vector3 b)
     {
@@ -174,12 +190,14 @@ public class Player : MonoBehaviour
             Instantiate(blockPrefab, transform.position + (blockPos - transform.position) / Vector3.Distance(blockPos, transform.position), Quaternion.identity);
             irons -= 5;
             blockCreateRate = 0.5f;
+            pui.updateIron(irons);
         }
 
     }
     public void hurt(float damageRecieved)
     {
         health -= damageRecieved;
+        healthbarx.setHealth(health, 100);
 
     }
     private void OnCollisionEnter2D(Collision2D other)
@@ -188,6 +206,7 @@ public class Player : MonoBehaviour
         {
             irons++;
             Destroy(other.gameObject);
+            pui.updateIron(irons);
         }
         else if (other.gameObject.GetComponent<IronOre>() != null)
         {

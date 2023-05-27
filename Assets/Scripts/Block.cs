@@ -4,7 +4,7 @@ using UnityEngine;
 using Actions;
 public class Block : MonoBehaviour
 {
-    private float hardness =40;
+    private float hardness = 40;
     private int R_type = 0;
     private int H_type = 2;
     private int D_type = 1;
@@ -18,7 +18,8 @@ public class Block : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    public float getHardness(){
+    public float getHardness()
+    {
         return hardness;
     }
 

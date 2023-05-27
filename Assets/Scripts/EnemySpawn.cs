@@ -6,6 +6,7 @@ public class EnemySpawn : MonoBehaviour
 {
     private float rate;
     private Random rnd;
+    private int enemies;
 
     public GameObject enemyPrefab;
     // Start is called before the first frame update

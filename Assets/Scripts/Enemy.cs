@@ -53,7 +53,6 @@ public class Enemy : MonoBehaviour
         speed = 0.02f;
         damage = 5;
         attackRate = 3;
-
         irons = 0;
     }
     private void EntitySet()
@@ -75,6 +74,7 @@ public class Enemy : MonoBehaviour
         attackRate -= Time.deltaTime;
         if (health <= 0)
         {
+            player.updateScore(5);
             Destroy(gameObject);
         }
         if (irons >= 5)
@@ -150,7 +150,7 @@ public class Enemy : MonoBehaviour
             hurt(damageRecieved);
         }
         else
-            Debug.Log("Dodged attack");
+            learnUI.addText("Dodged attack");
     }
     public void hurt(float damageRecieved)
     {
@@ -178,19 +178,23 @@ public class Enemy : MonoBehaviour
                 player.hurt(damage);
                 attackRate = 3;
             }
-        } else if(attackBlock){
-            if (attackRate <= 0 && block !=null)
+        }
+        else if (attackBlock)
+        {
+            if (attackRate <= 0 && block != null)
             {
-                if(block.getHardness()<=damage){
+                if (block.getHardness() <= damage)
+                {
                     block.damage(damage);
-                    block=null;
-                }else{
+                    block = null;
+                }
+                else
+                {
                     block.damage(damage);
                 }
-                
+
                 attackRate = 1;
-                learnUI.addText("block attack" );
-                
+                learnUI.addText("block attack");
             }
         }
     }
@@ -198,7 +202,7 @@ public class Enemy : MonoBehaviour
     {
         if (bestAction.ContainsKey(obstacle))
         {
-            learnUI.addText("bast Action about" + obstacle + "Action :" +bestAction[obstacle] );
+            learnUI.addText("bast Action about" + obstacle + "Action :" + bestAction[obstacle]);
             return bestAction[obstacle];
         }
         else
@@ -211,7 +215,7 @@ public class Enemy : MonoBehaviour
     {
         if (!actionsLearnt.ContainsKey(obstacle))
         {
-           
+
             Dictionary<Action, int> x = new Dictionary<Action, int>();
             actionsLearnt.Add(obstacle, x);
         }
@@ -235,12 +239,12 @@ public class Enemy : MonoBehaviour
                     best = action;
                 y = actionsLearnt[obstacle][action];
                 i++;
-                print(obstacle + " " + action + " " + actionsLearnt[obstacle][action]);
             }
         }
         if (i == 3)
         {
             bestAction.Add(obstacle, best);
+            learnUI.addText("Best Action for "+obstacle+" after Learn :" +best);
         }
         return best;
     }
@@ -250,7 +254,7 @@ public class Enemy : MonoBehaviour
         {
             if (gameObject.GetComponent<Block>().learnable)
             {
-                learnUI.addText("Learning about " + obstacle + " ,Action :" +action + "Result = "+gameObject.GetComponent<Block>().costCalculator(action) );
+                learnUI.addText("Learning about " + obstacle + " ,Action :" + action + "Result = " + gameObject.GetComponent<Block>().costCalculator(action));
                 Dictionary<Action, int> x = actionsLearnt[obstacle];
                 x.Add(action, gameObject.GetComponent<Block>().costCalculator(action));
             }
@@ -264,7 +268,7 @@ public class Enemy : MonoBehaviour
         {
             if (gameObject.GetComponent<Player>().learnable)
             {
-                learnUI.addText("Learning about " + obstacle + " ,Action :" +action + "Result = "+gameObject.GetComponent<Player>().costCalculator(action) );
+                learnUI.addText("Learning about " + obstacle + " ,Action :" + action + "Result = " + gameObject.GetComponent<Player>().costCalculator(action));
                 Dictionary<Action, int> x = actionsLearnt[obstacle];
                 x.Add(action, gameObject.GetComponent<Player>().costCalculator(action));
             }
@@ -277,7 +281,7 @@ public class Enemy : MonoBehaviour
         {
             if (gameObject.GetComponent<Iron>().learnable)
             {
-                learnUI.addText("Learning about " + obstacle + " ,Action :" +action + "Result = "+gameObject.GetComponent<Iron>().costCalculator(action) );
+                learnUI.addText("Learning about " + obstacle + " ,Action :" + action + "Result = " + gameObject.GetComponent<Iron>().costCalculator(action));
                 Dictionary<Action, int> x = actionsLearnt[obstacle];
                 x.Add(action, gameObject.GetComponent<Iron>().costCalculator(action));
             }
@@ -290,7 +294,7 @@ public class Enemy : MonoBehaviour
         {
             if (gameObject.GetComponent<Bullet>().learnable)
             {
-                learnUI.addText("Learning about " + obstacle + " ,Action :" +action + "Result = "+gameObject.GetComponent<Bullet>().costCalculator(action) );
+                learnUI.addText("Learning about " + obstacle + " ,Action :" + action + "Result = " + gameObject.GetComponent<Bullet>().costCalculator(action));
                 Dictionary<Action, int> x = actionsLearnt[obstacle];
                 x.Add(action, gameObject.GetComponent<Bullet>().costCalculator(action));
             }
@@ -324,7 +328,7 @@ public class Enemy : MonoBehaviour
         }
         else if (obstacle == Obstacle.Block)
         {
-            attackBlock=true;
+            attackBlock = true;
             block = gameObject.GetComponent<Block>();
             block.damage(damage);
         }
