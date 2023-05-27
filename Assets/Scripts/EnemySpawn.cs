@@ -13,19 +13,24 @@ public class EnemySpawn : MonoBehaviour
     void Start()
     {
         rate = 10;
+        enemies = 1;
         rnd = new Random();
     }
-
+    public void decreaseEnemies()
+    {
+        enemies--;
+    }
     // Update is called once per frame
     void Update()
     {
-        if (rate <= 0)
+        if (rate <= 0 && enemies <= 3)
         {
             int x = rnd.Next(-24, 24);
             int y = rnd.Next(-24, 24);
             Vector3 spawnPos = new Vector3(x, y, 0);
             Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
-            rate = 5;
+            rate = 2;
+            enemies++;
         }
         rate -= Time.deltaTime;
     }

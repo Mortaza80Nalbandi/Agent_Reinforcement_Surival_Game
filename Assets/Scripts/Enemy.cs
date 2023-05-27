@@ -31,6 +31,7 @@ public class Enemy : MonoBehaviour
     private Player player;
     private healthbar healthbarx;
     private healthbar sheildbar;
+    private EnemySpawn enemySpawn;
     private LearnUI learnUI;
     private Dictionary<Obstacle, Action> bestAction = new Dictionary<Obstacle, Action>();
     private Dictionary<Obstacle, Dictionary<Action, int>> actionsLearnt = new Dictionary<Obstacle, Dictionary<Action, int>>();
@@ -58,6 +59,7 @@ public class Enemy : MonoBehaviour
     private void EntitySet()
     {
         player = GameObject.Find("Player").GetComponent<Player>();
+        enemySpawn = GameObject.Find("EnemySpawn").GetComponent<EnemySpawn>();
         target = player.gameObject.transform;
         healthbarx = transform.GetChild(0).gameObject.GetComponent<healthbar>();
         sheildbar = transform.GetChild(1).gameObject.GetComponent<healthbar>();
@@ -75,6 +77,7 @@ public class Enemy : MonoBehaviour
         if (health <= 0)
         {
             player.updateScore(5);
+            enemySpawn.decreaseEnemies();
             Destroy(gameObject);
         }
         if (irons >= 5)
