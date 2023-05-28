@@ -13,7 +13,7 @@ public class EnemySpawn : MonoBehaviour
     void Start()
     {
         rate = 10;
-        enemies = 1;
+        enemies = 6;
         rnd = new Random();
     }
     public void decreaseEnemies()

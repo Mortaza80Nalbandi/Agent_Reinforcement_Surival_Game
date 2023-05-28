@@ -8,12 +8,13 @@ public class LearnUI : MonoBehaviour
     public Vector3 Offset;
     private int i;
     private string y;
+    private string lastWord;
 
     // Start is called before the first frame update
     void Start()
     {
         i = 0;
-        y="";
+        y = "";
     }
 
     // Update is called once per frame
@@ -23,9 +24,14 @@ public class LearnUI : MonoBehaviour
     }
     public void addText(string x)
     {
-        y = y + x + "\n";
-        text.text = y;
-        i++;
+        if (x != lastWord)
+        {
+            y = y + x + "\n";
+            text.text = y;
+            i++;
+            lastWord = x;
+        }
+
         if (i >= 5)
         {
             y = "";

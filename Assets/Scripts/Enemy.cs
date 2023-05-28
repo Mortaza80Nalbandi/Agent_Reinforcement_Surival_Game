@@ -247,7 +247,7 @@ public class Enemy : MonoBehaviour
         if (i == 3)
         {
             bestAction.Add(obstacle, best);
-            learnUI.addText("Best Action for "+obstacle+" after Learn :" +best);
+            learnUI.addText("Best Action for " + obstacle + " after Learn :" + best);
         }
         return best;
     }

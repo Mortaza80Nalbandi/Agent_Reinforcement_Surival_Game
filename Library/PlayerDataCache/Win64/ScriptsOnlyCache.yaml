@@ -67,43 +67,43 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1506}
+      Script: {instanceID: 1508}
     - Class: 114
-      Script: {instanceID: 1530}
+      Script: {instanceID: 1532}
     - Class: 114
-      Script: {instanceID: 1672}
+      Script: {instanceID: 1674}
     - Class: 114
-      Script: {instanceID: 1704}
+      Script: {instanceID: 1706}
     - Class: 114
-      Script: {instanceID: 1884}
+      Script: {instanceID: 1886}
     - Class: 114
-      Script: {instanceID: 2204}
+      Script: {instanceID: 2206}
     - Class: 114
-      Script: {instanceID: 2618}
+      Script: {instanceID: 2610}
     - Class: 114
-      Script: {instanceID: 2758}
+      Script: {instanceID: 2622}
     - Class: 114
-      Script: {instanceID: 2780}
+      Script: {instanceID: 2762}
     - Class: 114
-      Script: {instanceID: 2996}
+      Script: {instanceID: 2784}
     - Class: 114
-      Script: {instanceID: 3148}
+      Script: {instanceID: 3000}
     - Class: 114
-      Script: {instanceID: 3240}
+      Script: {instanceID: 3152}
     - Class: 114
-      Script: {instanceID: 3724}
+      Script: {instanceID: 3244}
     - Class: 114
-      Script: {instanceID: 4554}
+      Script: {instanceID: 3728}
     - Class: 114
-      Script: {instanceID: 4714}
+      Script: {instanceID: 4558}
     - Class: 114
-      Script: {instanceID: 4912}
+      Script: {instanceID: 4718}
     - Class: 114
-      Script: {instanceID: 5544}
+      Script: {instanceID: 4916}
     - Class: 114
-      Script: {instanceID: 5576}
+      Script: {instanceID: 5548}
     - Class: 114
-      Script: {instanceID: 17368}
+      Script: {instanceID: 5580}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -267,6 +267,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.2D.IK.Runtime.dll
     namespaceName: UnityEngine.U2D.IK
     className: IKManager2D
+  - hash:
+      serializedVersion: 2
+      Hash: 85bc8c99af3ebbf5135212630bd51d24
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: playerUI
   - hash:
       serializedVersion: 2
       Hash: a1aa98c78061c6f03a8c124cda576e67
@@ -707,10 +713,10 @@ ScriptsOnlyBuild:
     className: IronOreSpawn
   - hash:
       serializedVersion: 2
-      Hash: 348b2dfb58cf81384824d085a7007370
+      Hash: 85bc8c99af3ebbf5135212630bd51d24
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
-    className: playerUI
+    className: imgChanger
   platform: 19
   scenePathNames:
   - Assets/BaseScene.unity

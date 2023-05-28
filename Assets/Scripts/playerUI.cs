@@ -4,39 +4,41 @@ using UnityEngine;
 using UnityEngine.UI;
 public class playerUI : MonoBehaviour
 {
-    public Text text;
-    public Vector3 Offset;
-    private string weapon;
     private int Irons;
+    Text ironText;
+    Text scoreText;
     private int score;
+    Image m_Image;
+    public Sprite Bow_Sprite;
+    public Sprite Block_Sprite;
+    public Sprite Sword_Sprite;
 
     // Start is called before the first frame update
     void Start()
     {
-        weapon = "Bow";
+        m_Image =  transform.GetChild(0).gameObject.GetComponent<Image>();
+        scoreText =  transform.GetChild(1).gameObject.GetComponent<Text>();
+        ironText= transform.GetChild(2).gameObject.GetComponent<Text>();
     }
 
-    void Update()
-    {
-        text.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position + Offset);
-    }
     public void updateIron(int irs)
     {
         Irons = irs;
-        updateText();
+        ironText.text = "" + Irons;
     }
     public void updateWeapon(string wpn)
     {
-        weapon = wpn;
-        updateText();
+        if(wpn =="Bow"){
+            m_Image.sprite = Bow_Sprite;
+        }else if(wpn == "Meele"){
+            m_Image.sprite = Sword_Sprite;
+        }else if(wpn == "Block"){
+            m_Image.sprite = Block_Sprite;
+        }
     }
     public void updateScore(int score)
     {
         this.score = score;
-        updateText();
-    }
-    private void updateText()
-    {
-        text.text = "Weapon is " + weapon + "\n Irons = " + Irons + "\nScore : " + score;
+        scoreText.text = "Score : "+score ;
     }
 }

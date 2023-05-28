@@ -74,6 +74,7 @@ public class Player : MonoBehaviour
         damage = 5;
         pui.updateIron(irons);
         score = 0;
+         pui.updateScore(score);
     }
     private void rateSet()
     {
@@ -87,7 +88,7 @@ public class Player : MonoBehaviour
         MainCamera = Camera.main;
         healthbarx = transform.GetChild(1).gameObject.GetComponent<healthbar>();
         healthbarx.setHealth(health, 100);
-        pui = transform.GetChild(2).gameObject.GetComponent<playerUI>();
+        pui = GameObject.Find("UI").gameObject.GetComponent<playerUI>();
         MainCamera.enabled = true;
         enemy = null;
         ironOre = null;
