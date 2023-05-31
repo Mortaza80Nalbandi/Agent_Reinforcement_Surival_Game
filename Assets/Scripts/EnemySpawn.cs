@@ -13,7 +13,7 @@ public class EnemySpawn : MonoBehaviour
     void Start()
     {
         rate = 10;
-        enemies = 6;
+        enemies = 1;
         rnd = new Random();
     }
     public void decreaseEnemies()
@@ -23,7 +23,7 @@ public class EnemySpawn : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (rate <= 0 && enemies <= 3)
+        if (rate <= 0 && enemies <= 7)
         {
             int x = rnd.Next(-24, 24);
             int y = rnd.Next(-24, 24);

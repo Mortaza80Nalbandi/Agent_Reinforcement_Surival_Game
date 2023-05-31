@@ -74,7 +74,7 @@ public class Player : MonoBehaviour
         damage = 5;
         pui.updateIron(irons);
         score = 0;
-         pui.updateScore(score);
+        pui.updateScore(score);
     }
     private void rateSet()
     {

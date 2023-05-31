@@ -9,15 +9,21 @@ public class imgChanger : MonoBehaviour
     public Sprite Bow_Sprite;
     public Sprite Block_Sprite;
     public Sprite Sword_Sprite;
-    public void updateImage(string wpn){
+    public void updateImage(string wpn)
+    {
         m_Image = GetComponent<Image>();
-        if(wpn =="Bow"){
+        if (wpn == "Bow")
+        {
             m_Image.sprite = Bow_Sprite;
-        }else if(wpn == "Meele"){
+        }
+        else if (wpn == "Meele")
+        {
             m_Image.sprite = Sword_Sprite;
-        }else if(wpn == "Block"){
+        }
+        else if (wpn == "Block")
+        {
             m_Image.sprite = Block_Sprite;
         }
     }
-    
+
 }

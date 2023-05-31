@@ -45,9 +45,9 @@ public class Bullet : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.GetComponent<wall>() != null ||other.gameObject.GetComponent<Block>() != null )
+        if (other.gameObject.GetComponent<wall>() != null || other.gameObject.GetComponent<Block>() != null)
         {
-           Destroy(gameObject);
+            Destroy(gameObject);
         }
     }
 }
