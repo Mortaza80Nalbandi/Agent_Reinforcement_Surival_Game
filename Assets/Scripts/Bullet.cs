@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Actions;
 public class Bullet : MonoBehaviour
 {
@@ -13,9 +14,17 @@ public class Bullet : MonoBehaviour
     void Start()
     {
         damage = 5;
+        Camera MainCamera = Camera.main;
+        Vector2 positionOnScreen = MainCamera.WorldToViewportPoint(transform.position);
+        Vector2 mouseOnScreen = (Vector2)MainCamera.ScreenToViewportPoint(Input.mousePosition);
+        float angle = AngleBetweenTwoPoints(positionOnScreen, mouseOnScreen);
+        transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angle+135));
     }
 
-
+private float AngleBetweenTwoPoints(Vector3 a, Vector3 b)
+    {
+        return Mathf.Atan2(a.y - b.y, a.x - b.x) * Mathf.Rad2Deg;
+    }
     public float getDamage()
     {
         return damage;

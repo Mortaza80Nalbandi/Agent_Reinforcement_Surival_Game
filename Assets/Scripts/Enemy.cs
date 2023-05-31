@@ -24,6 +24,7 @@ public class Enemy : MonoBehaviour
     private bool attackBlock;
     private float attackRate;
     private int irons;
+    private int deathScore;
 
     private Random rnd;
     private Block block;
@@ -55,6 +56,7 @@ public class Enemy : MonoBehaviour
         damage = 5;
         attackRate = 3;
         irons = 0;
+        deathScore = 5;
     }
     private void EntitySet()
     {
@@ -76,7 +78,7 @@ public class Enemy : MonoBehaviour
         attackRate -= Time.deltaTime;
         if (health <= 0)
         {
-            player.updateScore(5);
+            player.updateScore(deathScore);
             enemySpawn.decreaseEnemies();
             Destroy(gameObject);
         }
@@ -96,6 +98,7 @@ public class Enemy : MonoBehaviour
         if (irons > 5 && shield <= 50)
         {
             shield = 100f;
+            sheildbar.setHealth(shield, 100);
             irons -= 5;
         }
         else if (irons > 5)
