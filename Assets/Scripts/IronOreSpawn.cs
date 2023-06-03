@@ -12,7 +12,6 @@ public class IronOreSpawn : MonoBehaviour
     private int yLowerband;
     private int xHigherband;
     private int yHigherband;
-    // Start is called before the first frame update
     void Start()
     {
         rate = 10;
@@ -22,8 +21,6 @@ public class IronOreSpawn : MonoBehaviour
         yHigherband = 24;
         rnd = new Random();
     }
-
-    // Update is called once per frame
     void Update()
     {
         if (rate <= 0)

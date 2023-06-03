@@ -6,36 +6,35 @@ public class LearnUI : MonoBehaviour
 {
     public Text text;
     public Vector3 Offset;
-    private int i;
-    private string y;
-    private string lastWord;
+    private int printedLinesNumber;
+    private string printedLines;
+    private string lastSentence;
 
-    // Start is called before the first frame update
     void Start()
     {
-        i = 0;
-        y = "";
+        printedLinesNumber = 0;
+        printedLines = "";
     }
 
-    // Update is called once per frame
     void Update()
     {
         text.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position + Offset);
     }
-    public void addText(string x)
+    public void addText(string newComment)
     {
-        if (x != lastWord)
+        if (printedLinesNumber > 5)
         {
-            y = y + x + "\n";
-            text.text = y;
-            i++;
-            lastWord = x;
+            printedLines = "";
+            printedLinesNumber = 0;
+        }
+        if (newComment != lastSentence)
+        {
+            printedLines = printedLines + newComment + "\n";
+            text.text = printedLines;
+            printedLinesNumber++;
+            lastSentence = newComment;
         }
 
-        if (i >= 5)
-        {
-            y = "";
-            i = 0;
-        }
+
     }
 }
