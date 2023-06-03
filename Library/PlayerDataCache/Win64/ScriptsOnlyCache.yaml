@@ -17,7 +17,6 @@ ScriptsOnlyBuild:
     - UnityEditor.U2D.Animation.BoneGizmo
     Unity.2D.IK.Editor.dll:
     - UnityEditor.U2D.IK.IKEditorManager
-    - UnityEditor.U2D.IK.IKGizmos
     Unity.2D.IK.Runtime.dll:
     - UnityEditor.U2D.IK.IKEditorManagerHelper
     Unity.2D.Tilemap.Editor.dll:
@@ -67,31 +66,31 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1508}
+      Script: {instanceID: 1506}
     - Class: 114
-      Script: {instanceID: 1532}
+      Script: {instanceID: 1530}
     - Class: 114
-      Script: {instanceID: 1674}
+      Script: {instanceID: 1672}
     - Class: 114
-      Script: {instanceID: 1706}
+      Script: {instanceID: 1704}
     - Class: 114
-      Script: {instanceID: 1886}
+      Script: {instanceID: 1884}
     - Class: 114
-      Script: {instanceID: 2206}
+      Script: {instanceID: 2204}
     - Class: 114
-      Script: {instanceID: 2610}
+      Script: {instanceID: 2608}
     - Class: 114
-      Script: {instanceID: 2622}
+      Script: {instanceID: 2620}
     - Class: 114
-      Script: {instanceID: 2762}
+      Script: {instanceID: 2760}
     - Class: 114
-      Script: {instanceID: 2784}
+      Script: {instanceID: 2782}
     - Class: 114
-      Script: {instanceID: 3000}
+      Script: {instanceID: 2998}
     - Class: 114
-      Script: {instanceID: 3152}
+      Script: {instanceID: 3150}
     - Class: 114
-      Script: {instanceID: 3244}
+      Script: {instanceID: 3242}
     - Class: 114
       Script: {instanceID: 3728}
     - Class: 114
@@ -437,6 +436,12 @@ ScriptsOnlyBuild:
     className: Outline
   - hash:
       serializedVersion: 2
+      Hash: 85bc8c99af3ebbf5135212630bd51d24
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: imgChanger
+  - hash:
+      serializedVersion: 2
       Hash: c3d3430df9e3ea95e3e3d587961390fb
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
@@ -711,12 +716,6 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: IronOreSpawn
-  - hash:
-      serializedVersion: 2
-      Hash: 85bc8c99af3ebbf5135212630bd51d24
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: imgChanger
   platform: 19
   scenePathNames:
   - Assets/BaseScene.unity
