@@ -6,19 +6,19 @@ public class IronOre : MonoBehaviour
 {
     private float hardness;
     public GameObject IronPF;
-    // Start is called before the first frame update
+    private int ironsTpSpawn;
     void Start()
     {
         hardness = 100f;
+        ironsTpSpawn = 4;
     }
 
-    // Update is called once per frame
     public void hurt(float damage)
     {
         hardness -= damage * 4;
         if (hardness <= 0)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < ironsTpSpawn; i++)
                 Instantiate(IronPF, transform.position, Quaternion.identity);
         }
     }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class imgChanger : MonoBehaviour
 {
-    Image m_Image;
+    private Image m_Image;
     public Sprite Bow_Sprite;
     public Sprite Block_Sprite;
     public Sprite Sword_Sprite;

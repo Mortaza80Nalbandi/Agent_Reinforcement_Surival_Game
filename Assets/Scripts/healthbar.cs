@@ -5,15 +5,11 @@ using UnityEngine.UI;
 
 public class healthbar : MonoBehaviour
 {
-    // Start is called before the first frame update
-
     public Slider slider;
     public Color low;
     public Color high;
     public Vector3 Offset;
 
-
-    // Update is called once per frame
     void Update()
     {
         slider.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position + Offset);
