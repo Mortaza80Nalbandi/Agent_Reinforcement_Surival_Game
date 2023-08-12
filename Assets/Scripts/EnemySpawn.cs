@@ -24,7 +24,7 @@ public class EnemySpawn : MonoBehaviour
         xHigherband = 24;
         yLowerband = -24;
         yHigherband = 24;
-        maxEnemies = 7;
+        maxEnemies = -5;
         killedEnemies = 0;
 ;        rnd = new Random();
     }

@@ -16,17 +16,17 @@ public class Enemy : MonoBehaviour
         Null
     }
 
-    private float health;
+    public float health;
     private float shield;
     private float speed;
 
-    private float damage;
+    public float damage;
     private bool attack;
     private bool attackBlock;
     private float attackRate;
     private int irons;
     private int deathScore;
-    private int Threshhold=20;
+    private int Threshhold=10;
 
     private Random rnd;
     private Block block;
@@ -160,29 +160,29 @@ public class Enemy : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
-        List<Action> actions;
+        List<Action> actionss = null;
         Obstacle obstacle = Obstacle.Null;
         if (other.gameObject.GetComponent<Player>() != null)
         {
             obstacle = Obstacle.Player;
-            actions = costSetter(Obstacle.Player, other.gameObject);
+            actionss = costSetter(Obstacle.Player, other.gameObject);
         }
         else if (other.gameObject.GetComponent<Block>() != null)
         {
             obstacle = Obstacle.Block;
-            actions = costSetter(Obstacle.Block, other.gameObject);
+            actionss = costSetter(Obstacle.Block, other.gameObject);
         }
         else if (other.gameObject.GetComponent<Iron>() != null)
         {
             obstacle = Obstacle.Iron;
-            actions = costSetter(Obstacle.Iron, other.gameObject);
+            actionss = costSetter(Obstacle.Iron, other.gameObject);
         }else if (other.gameObject.GetComponent<PowerUp>() != null)
         {
             obstacle = Obstacle.PowerUp;
-            actions = costSetter(Obstacle.PowerUp, other.gameObject);
+            actionss = costSetter(Obstacle.PowerUp, other.gameObject);
             
         }
-        //actionManager(obstacle, other.gameObject, actions);
+        actionManagerArray(obstacle,other.gameObject,actionss);
 
     }
 
@@ -203,98 +203,180 @@ public class Enemy : MonoBehaviour
     }
 
 
-    private List<Action> costSetter(Obstacle obstacle, GameObject gameObject)
+    private List<Action> costSetter(Obstacle obstacle, GameObject go)
     {
+        foreach (var action in bestAction) 
+            {
+                print(action.Key);
+            }
         if (bestAction.ContainsKey(obstacle))
         {
-            learnUI.addText("bast Action about" + obstacle + "Action :" + bestAction[obstacle]);
+            string y = "";
+            foreach (Action action in bestAction[obstacle]) 
+            {
+                y+=action;
+                y+="->";
+            }
+            learnUI.addText("bast Action about" + obstacle + "Action List :" + y);
             return bestAction[obstacle];
         }
         else
         {
-            return costAll(obstacle, gameObject);
+            return costAll(obstacle, go);
         }
     }
 
-    private  List<Action>  costAll(Obstacle obstacle, GameObject gameObject)
+    private  List<Action>  costAll(Obstacle obstacle, GameObject go)
     {
-        Dictionary<List<Action>, int> x ;
         if (!actionsLearnt.ContainsKey(obstacle))
         {
-            x = new Dictionary<List<Action>, int>();
+            Dictionary<List<Action>, int> x = new Dictionary<List<Action>, int>();
             actionsLearnt.Add(obstacle, x);
-        } else {
-            x = actionsLearnt[obstacle];
         }
+         
         List<Action> actionArray = new List<Action>();
-        RecursiveLearning(actionArray,obstacle,0);
+        if(RecursiveLearning(actionArray,go,obstacle,0)){
+            List<Action> Best = new List<Action>();
+            int bestReward=0;
+            foreach(var a in actionsLearnt[obstacle]) {
+                if(a.Value > bestReward)
+                    Best = a.Key;
+                    bestReward = a.Value;
+            }
+            bestAction.Add(obstacle,Best);
+            actionManagerArray(obstacle,go,Best);
+            print("ddddddd");
+        }
+            
+       string f = "1\n";
+        foreach (var action in actionsLearnt[obstacle]) 
+            {
+                List<Action> z = action.Key;
+                foreach(Action a in z){
+                    f+=a;
+                    f+="->";
+                }
+                f=f+"r: "+action.Value+ "      ";  
+            }
+            print(f);
         List<Action> y = new List<Action>();
         return y;
     }
-    private bool RecursiveLearning(List<Action> actionArray,Obstacle obstacle,int reward){
+    private bool RecursiveLearning(List<Action> actionArray,GameObject go,Obstacle obstacle,int reward){
+        if(actionArray.Count==3){
+            return true;
+        }
         foreach (Action action in actions)
         {
+            if(checkEquals(actionArray,obstacle))
+                if(checkReward(actionArray,obstacle))
+                    return true;
             actionArray.Add(action);
             int cost = 0;
-            if (!actionsLearnt[obstacle].ContainsKey(actionArray))
+            if (!checkEquals(actionArray,obstacle))
             {
-                cost = Learn(obstacle, gameObject, actionArray,reward);
-                if (cost <=-10){
-                    Dictionary<List<Action>, int> x = actionsLearnt[obstacle];
-                    x.Add(actionArray,-10);
+                cost = Learn(obstacle, go, actionArray,reward);
+                actionManager(obstacle,go,actionArray[actionArray.Count-1]);
+                if (cost <=-1*Threshhold){
+                    actionsLearnt[obstacle].Add(actionArray,-10);
                     return false;
                 }
-                else if(cost >=10){
-                    Dictionary<List<Action>, int> x = actionsLearnt[obstacle];
-                    x.Add(actionArray,cost+reward);
+                else if(cost >=Threshhold){
+                    actionsLearnt[obstacle].Add(actionArray,cost+reward);
+                    return false;
                 }
+                if(!RecursiveLearning(actionArray,go,obstacle,cost+reward))
+                return false;
+            unactionManager(obstacle,go,actionArray[actionArray.Count-1]);
             }
-            RecursiveLearning(actionArray,obstacle,cost+reward);
             actionArray.RemoveAt(actionArray.Count-1);
         }
         return true;
     }
-    private int Learn(Obstacle obstacle, GameObject gameObject, List<Action> actions, int reward)
+    private bool checkEquals(List<Action> actionArray,Obstacle obstacle){
+        foreach (var action in actionsLearnt[obstacle]){
+            List<Action> z = action.Key;
+            int i=0;
+            if(z.Count == actionArray.Count)
+                foreach(Action a in z){
+                    if(actionArray[i] != a )
+                        break;
+                    i+=1;
+                }
+                if(i== actionArray.Count&& i!=0)
+                    return true;       
+        } 
+        return false;
+    }
+    private bool checkReward(List<Action> actionArray,Obstacle obstacle){
+        foreach (var action in actionsLearnt[obstacle]){
+            List<Action> z = action.Key;
+            int i=0;
+            if(z.Count == actionArray.Count)
+                foreach(Action a in z){
+                    if(actionArray[i] != a )
+                        break;
+                    i+=1;
+                }
+                if(i== actionArray.Count&& i!=0)
+                    if(action.Value<=-1*Threshhold || action.Value>=Threshhold)   
+                        return true;    
+        } 
+        return false;
+    }
+    private int Learn(Obstacle obstacle, GameObject go, List<Action> actions, int reward)
     {
         int cost = 0;
         if (obstacle == Obstacle.Block)
         {
-            cost = gameObject.GetComponent<Block>().costCalculator(actions[0]);
+            cost = go.GetComponent<Block>().costCalculator(actions[0]);
             learnUI.addText("Learning about " + obstacle + " ,Action List :" + actions + "Result = " + (cost+reward));
             return cost;
 
         }
         else if (obstacle == Obstacle.Player)
         {
-            cost = gameObject.GetComponent<Player>().costCalculator(actions[0]);
+            cost = go.GetComponent<Player>().costCalculator(actions[0]);
             learnUI.addText("Learning about " + obstacle + " ,Action List :" + actions + "Result = " + (cost+reward));
             return cost;
         }
         else if (obstacle == Obstacle.Iron)
         {
-            cost = gameObject.GetComponent<Iron>().costCalculator(actions[0]);
+            cost = go.GetComponent<Iron>().costCalculator(actions[0]);
             learnUI.addText("Learning about " + obstacle + " ,Action List :" + actions + "Result = " + (cost+reward));
             return cost;
         }else if (obstacle == Obstacle.PowerUp)
         {
-             cost = gameObject.GetComponent<PowerUp>().costCalculator(actions[0]);
-            learnUI.addText("Learning about " + obstacle + " ,Action List :" + actions + "Result = " + (cost+reward));
+            string y = "";
+            foreach (Action action in actions) 
+            {
+                y+=action;
+                y+="->";
+            }
+            cost = go.GetComponent<PowerUp>().costCalculator(actions[actions.Count-1]);
+            learnUI.addText("Learning about " + obstacle + " ,Action List :" + y + "Result = " + (cost+reward));
             return cost;
         }
         return cost;
     }
-    private void actionManager(Obstacle obstacle, GameObject gameObject, Action action)
+    private void actionManagerArray(Obstacle obstacle, GameObject go, List<Action> actionss){
+        foreach(Action action in actionss){
+            actionManager(obstacle,go,action);
+        }
+
+    }
+    private void actionManager(Obstacle obstacle, GameObject go, Action action)
     {
         if (action == Action.Hit)
         {
-            hitManager(obstacle, gameObject);
+            hitManager(obstacle, go);
         }
         else if (action == Action.Recieve)
         {
-            RecieveManager(obstacle, gameObject);
+            RecieveManager(obstacle, go);
         }
     }
-    private void hitManager(Obstacle obstacle, GameObject gameObject)
+    private void hitManager(Obstacle obstacle, GameObject go)
     {
         if (obstacle == Obstacle.Player)
         {
@@ -303,22 +385,23 @@ public class Enemy : MonoBehaviour
         else if (obstacle == Obstacle.Block)
         {
             attackBlock = true;
-            block = gameObject.GetComponent<Block>();
+            block = go.GetComponent<Block>();
             block.damage(damage);
         }
         else if (obstacle == Obstacle.Iron)
         {
-            gameObject.GetComponent<Iron>().destroy();
+            go.GetComponent<Iron>().destroy();
         }
         else if (obstacle == Obstacle.Bullet)
         {
             //NOTHING IS DONE here
         }else if (obstacle == Obstacle.PowerUp)
         {
-            powerUp = gameObject.GetComponent<PowerUp>(); 
+            powerUp = go.GetComponent<PowerUp>(); 
+            powerUp.hurt();
         }
     }
-    private void RecieveManager(Obstacle obstacle, GameObject gameObject)
+    private void RecieveManager(Obstacle obstacle, GameObject go)
     {
         if (obstacle == Obstacle.Player)
         {
@@ -331,11 +414,30 @@ public class Enemy : MonoBehaviour
         else if (obstacle == Obstacle.Iron)
         {
             irons++;
-            gameObject.GetComponent<Iron>().destroy();
+            go.GetComponent<Iron>().destroy();
         }
         else if (obstacle == Obstacle.PowerUp)
         {
             //aaaaaaaaaaaaaaaaaaaaaaaaa
+            int q = go.GetComponent<PowerUp>().RewardMulti();
+            health= health*q;
+            damage = damage*q;
+            Destroy(go);
+        }
+    }
+    private void unactionManager(Obstacle obstacle, GameObject go, Action action)
+    {
+        if (action == Action.Hit)
+        {
+            if (obstacle == Obstacle.PowerUp)
+        {
+            powerUp = go.GetComponent<PowerUp>(); 
+            powerUp.unhurt();
+        }
+        }
+        else if (action == Action.Recieve)
+        {
+            //sssssssssssssssssss
         }
     }
 }

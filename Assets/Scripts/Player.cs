@@ -112,7 +112,7 @@ public class Player : MonoBehaviour
         {
             if (meeleAttackRate <= 0)
             {
-                powerUp.hurt(damage);
+                powerUp.hurt();
                 meeleAttackRate = 0.25f;
             }
         }
