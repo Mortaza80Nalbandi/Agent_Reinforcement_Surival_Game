@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour
         Iron,
         Block,
         Bullet,
+        PowerUp,
         Null
     }
 
@@ -25,33 +26,34 @@ public class Enemy : MonoBehaviour
     private float attackRate;
     private int irons;
     private int deathScore;
+    private int Threshhold=20;
 
     private Random rnd;
     private Block block;
+    private PowerUp powerUp;
     private Transform target;
     private Player player;
     private healthbar healthbarx;
     private healthbar sheildbar;
     private EnemySpawn enemySpawn;
     private LearnUI learnUI;
-    private Dictionary<Obstacle, Action> bestAction = new Dictionary<Obstacle, Action>();
-    private Dictionary<Obstacle, Dictionary<Action, int>> actionsLearnt = new Dictionary<Obstacle, Dictionary<Action, int>>();
+    private Dictionary<Obstacle,List<Action>> bestAction = new Dictionary<Obstacle,List<Action>>();
+    private Dictionary<Obstacle, Dictionary<List<Action>, int>> actionsLearnt = new Dictionary<Obstacle, Dictionary<List<Action>, int>>();
     private Action[] actions;
     void Start()
     {
         attributeSet();
         EntitySet();
-        actions = new Action[3];
+        actions = new Action[2];
         actions[0] = Action.Hit;
-        actions[1] = Action.Dodge;
-        actions[2] = Action.Recieve;
+        actions[1] = Action.Recieve;
 
     }
 
     private void attributeSet()
     {
-        health = 100f;
-        shield = 100f;
+        health = 10f;
+        shield = 10f;
         speed = 0.02f;
         damage = 5;
         attackRate = 3;
@@ -66,9 +68,10 @@ public class Enemy : MonoBehaviour
         healthbarx = transform.GetChild(0).gameObject.GetComponent<healthbar>();
         sheildbar = transform.GetChild(1).gameObject.GetComponent<healthbar>();
         learnUI = transform.GetChild(2).gameObject.GetComponent<LearnUI>();
-        healthbarx.setHealth(health, 100);
-        sheildbar.setHealth(shield, 100);
+        healthbarx.setHealth(health, 10);
+        sheildbar.setHealth(shield, 10);
         rnd = new Random();
+        powerUp = null;
     }
     // Update is called once per frame
     void Update()
@@ -107,73 +110,24 @@ public class Enemy : MonoBehaviour
             irons -= 5;
         }
     }
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        Action action = Action.Null;
-        Obstacle obstacle = Obstacle.Null;
-        if (other.gameObject.GetComponent<Player>() != null)
-        {
-            obstacle = Obstacle.Player;
-            action = costSetter(Obstacle.Player, other.gameObject);
-        }
-        else if (other.gameObject.GetComponent<Block>() != null)
-        {
-            obstacle = Obstacle.Block;
-            action = costSetter(Obstacle.Block, other.gameObject);
-        }
-        else if (other.gameObject.GetComponent<Iron>() != null)
-        {
-            obstacle = Obstacle.Iron;
-            action = costSetter(Obstacle.Iron, other.gameObject);
-        }
-        actionManager(obstacle, other.gameObject, action);
-
-    }
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.GetComponent<Bullet>() != null)
-        {
-            Action action = costSetter(Obstacle.Bullet, other.gameObject);
-            actionManager(Obstacle.Bullet, other.gameObject, action);
-        }
-    }
-    private void OnCollisionExit2D(Collision2D other)
-    {
-        if (other.gameObject.GetComponent<Player>() != null)
-        {
-            attack = false;
-        }
-        else if (other.gameObject.GetComponent<Block>() != null)
-        {
-            block = null;
-            attackBlock = false;
-        }
-    }
-    private void dodge(float damageRecieved)
+        public void hurt(float damageRecieved)
     {
         if (rnd.Next(0, 100) < 80)
         {
-            hurt(damageRecieved);
+            if (shield <= 0)
+            {
+            health -= damageRecieved;
+            healthbarx.setHealth(health, 10f);
+            }
+            else
+            {
+            shield -= damageRecieved;
+            sheildbar.setHealth(shield, 10f);
+            }
         }
         else
             learnUI.addText("Dodged attack");
-    }
-    public void hurt(float damageRecieved)
-    {
-        if (shield <= 0)
-        {
-            health -= damageRecieved;
-            healthbarx.setHealth(health, 100f);
-        }
-        else
-        {
-            shield -= damageRecieved;
-            sheildbar.setHealth(shield, 100);
-        }
-    }
-    public void bulletHit(float damage1)
-    {
-        hurt(damage1);
+        
     }
     private void attackCheck()
     {
@@ -184,7 +138,7 @@ public class Enemy : MonoBehaviour
                 player.hurt(damage);
                 attackRate = 3;
             }
-        }
+        }     
         else if (attackBlock)
         {
             if (attackRate <= 0 && block != null)
@@ -204,7 +158,52 @@ public class Enemy : MonoBehaviour
             }
         }
     }
-    private Action costSetter(Obstacle obstacle, GameObject gameObject)
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        List<Action> actions;
+        Obstacle obstacle = Obstacle.Null;
+        if (other.gameObject.GetComponent<Player>() != null)
+        {
+            obstacle = Obstacle.Player;
+            actions = costSetter(Obstacle.Player, other.gameObject);
+        }
+        else if (other.gameObject.GetComponent<Block>() != null)
+        {
+            obstacle = Obstacle.Block;
+            actions = costSetter(Obstacle.Block, other.gameObject);
+        }
+        else if (other.gameObject.GetComponent<Iron>() != null)
+        {
+            obstacle = Obstacle.Iron;
+            actions = costSetter(Obstacle.Iron, other.gameObject);
+        }else if (other.gameObject.GetComponent<PowerUp>() != null)
+        {
+            obstacle = Obstacle.PowerUp;
+            actions = costSetter(Obstacle.PowerUp, other.gameObject);
+            
+        }
+        //actionManager(obstacle, other.gameObject, actions);
+
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.GetComponent<Player>() != null)
+        {
+            attack = false;
+        }
+        else if (other.gameObject.GetComponent<Block>() != null)
+        {
+            block = null;
+            attackBlock = false;
+        }else if (other.gameObject.GetComponent<PowerUp>() != null)
+        {
+            powerUp = null;
+        }
+    }
+
+
+    private List<Action> costSetter(Obstacle obstacle, GameObject gameObject)
     {
         if (bestAction.ContainsKey(obstacle))
         {
@@ -217,109 +216,78 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private Action costAll(Obstacle obstacle, GameObject gameObject)
+    private  List<Action>  costAll(Obstacle obstacle, GameObject gameObject)
     {
+        Dictionary<List<Action>, int> x ;
         if (!actionsLearnt.ContainsKey(obstacle))
         {
-
-            Dictionary<Action, int> x = new Dictionary<Action, int>();
+            x = new Dictionary<List<Action>, int>();
             actionsLearnt.Add(obstacle, x);
+        } else {
+            x = actionsLearnt[obstacle];
         }
-        foreach (Action action in actions)
-        {
-            if (!actionsLearnt[obstacle].ContainsKey(action))
-            {
-                if (!Learn(obstacle, gameObject, action))
-                    break;
-                actionManager(obstacle, gameObject, action);
-            }
-        }
-        Action best = Action.Dodge;
-        int y = -10;
-        int i = 0;
-        foreach (Action action in actions)
-        {
-            if (actionsLearnt[obstacle].ContainsKey(action))
-            {
-                if (actionsLearnt[obstacle][action] > y)
-                    best = action;
-                y = actionsLearnt[obstacle][action];
-                i++;
-            }
-        }
-        if (i == 3)
-        {
-            bestAction.Add(obstacle, best);
-            learnUI.addText("Best Action for " + obstacle + " after Learn :" + best);
-        }
-        return best;
+        List<Action> actionArray = new List<Action>();
+        RecursiveLearning(actionArray,obstacle,0);
+        List<Action> y = new List<Action>();
+        return y;
     }
-    private bool Learn(Obstacle obstacle, GameObject gameObject, Action action)
+    private bool RecursiveLearning(List<Action> actionArray,Obstacle obstacle,int reward){
+        foreach (Action action in actions)
+        {
+            actionArray.Add(action);
+            int cost = 0;
+            if (!actionsLearnt[obstacle].ContainsKey(actionArray))
+            {
+                cost = Learn(obstacle, gameObject, actionArray,reward);
+                if (cost <=-10){
+                    Dictionary<List<Action>, int> x = actionsLearnt[obstacle];
+                    x.Add(actionArray,-10);
+                    return false;
+                }
+                else if(cost >=10){
+                    Dictionary<List<Action>, int> x = actionsLearnt[obstacle];
+                    x.Add(actionArray,cost+reward);
+                }
+            }
+            RecursiveLearning(actionArray,obstacle,cost+reward);
+            actionArray.RemoveAt(actionArray.Count-1);
+        }
+        return true;
+    }
+    private int Learn(Obstacle obstacle, GameObject gameObject, List<Action> actions, int reward)
     {
+        int cost = 0;
         if (obstacle == Obstacle.Block)
         {
-            if (gameObject.GetComponent<Block>().learnable)
-            {
-                learnUI.addText("Learning about " + obstacle + " ,Action :" + action + "Result = " + gameObject.GetComponent<Block>().costCalculator(action));
-                Dictionary<Action, int> x = actionsLearnt[obstacle];
-                x.Add(action, gameObject.GetComponent<Block>().costCalculator(action));
-            }
-            else
-            {
-                return false;
-            }
+            cost = gameObject.GetComponent<Block>().costCalculator(actions[0]);
+            learnUI.addText("Learning about " + obstacle + " ,Action List :" + actions + "Result = " + (cost+reward));
+            return cost;
 
         }
         else if (obstacle == Obstacle.Player)
         {
-            if (gameObject.GetComponent<Player>().learnable)
-            {
-                learnUI.addText("Learning about " + obstacle + " ,Action :" + action + "Result = " + gameObject.GetComponent<Player>().costCalculator(action));
-                Dictionary<Action, int> x = actionsLearnt[obstacle];
-                x.Add(action, gameObject.GetComponent<Player>().costCalculator(action));
-            }
-            else
-            {
-                return false;
-            }
+            cost = gameObject.GetComponent<Player>().costCalculator(actions[0]);
+            learnUI.addText("Learning about " + obstacle + " ,Action List :" + actions + "Result = " + (cost+reward));
+            return cost;
         }
         else if (obstacle == Obstacle.Iron)
         {
-            if (gameObject.GetComponent<Iron>().learnable)
-            {
-                learnUI.addText("Learning about " + obstacle + " ,Action :" + action + "Result = " + gameObject.GetComponent<Iron>().costCalculator(action));
-                Dictionary<Action, int> x = actionsLearnt[obstacle];
-                x.Add(action, gameObject.GetComponent<Iron>().costCalculator(action));
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else if (obstacle == Obstacle.Bullet)
+            cost = gameObject.GetComponent<Iron>().costCalculator(actions[0]);
+            learnUI.addText("Learning about " + obstacle + " ,Action List :" + actions + "Result = " + (cost+reward));
+            return cost;
+        }else if (obstacle == Obstacle.PowerUp)
         {
-            if (gameObject.GetComponent<Bullet>().learnable)
-            {
-                learnUI.addText("Learning about " + obstacle + " ,Action :" + action + "Result = " + gameObject.GetComponent<Bullet>().costCalculator(action));
-                Dictionary<Action, int> x = actionsLearnt[obstacle];
-                x.Add(action, gameObject.GetComponent<Bullet>().costCalculator(action));
-            }
-            else
-            {
-                return false;
-            }
+             cost = gameObject.GetComponent<PowerUp>().costCalculator(actions[0]);
+            learnUI.addText("Learning about " + obstacle + " ,Action List :" + actions + "Result = " + (cost+reward));
+            return cost;
         }
-        return true;
+        return cost;
     }
     private void actionManager(Obstacle obstacle, GameObject gameObject, Action action)
     {
         if (action == Action.Hit)
         {
             hitManager(obstacle, gameObject);
-        }
-        else if (action == Action.Dodge)
-        {
-            dodgeManager(obstacle, gameObject);
         }
         else if (action == Action.Recieve)
         {
@@ -345,27 +313,9 @@ public class Enemy : MonoBehaviour
         else if (obstacle == Obstacle.Bullet)
         {
             //NOTHING IS DONE here
-        }
-    }
-    private void dodgeManager(Obstacle obstacle, GameObject gameObject)
-    {
-        if (obstacle == Obstacle.Player)
+        }else if (obstacle == Obstacle.PowerUp)
         {
-            //NOTHING IS DONE here
-        }
-        else if (obstacle == Obstacle.Block)
-        {
-            //NOTHING IS DONE here
-        }
-        else if (obstacle == Obstacle.Iron)
-        {
-            //NOTHING IS DONE here
-        }
-        else if (obstacle == Obstacle.Bullet)
-        {
-            dodge(gameObject.GetComponent<Bullet>().getDamage());
-            gameObject.GetComponent<Bullet>().learnable = false;
-            Destroy(gameObject);
+            powerUp = gameObject.GetComponent<PowerUp>(); 
         }
     }
     private void RecieveManager(Obstacle obstacle, GameObject gameObject)
@@ -383,10 +333,9 @@ public class Enemy : MonoBehaviour
             irons++;
             gameObject.GetComponent<Iron>().destroy();
         }
-        else if (obstacle == Obstacle.Bullet)
+        else if (obstacle == Obstacle.PowerUp)
         {
-            hurt(gameObject.GetComponent<Bullet>().getDamage() * 3);
-            gameObject.GetComponent<Bullet>().destroy();
+            //aaaaaaaaaaaaaaaaaaaaaaaaa
         }
     }
 }

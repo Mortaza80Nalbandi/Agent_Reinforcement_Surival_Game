@@ -7,6 +7,7 @@ public class EnemySpawn : MonoBehaviour
     private float rate;
     private Random rnd;
     private int enemies;
+    private int killedEnemies;
     private int maxEnemies;
     private int xLowerband;
     private int yLowerband;
@@ -17,18 +18,24 @@ public class EnemySpawn : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rate = 10;
+        rate =5 ;
         enemies = 1;
         xLowerband = -24;
         xHigherband = 24;
         yLowerband = -24;
         yHigherband = 24;
         maxEnemies = 7;
-        rnd = new Random();
+        killedEnemies = 0;
+;        rnd = new Random();
     }
     public void decreaseEnemies()
     {
         enemies--;
+        killedEnemies++;
+        if(killedEnemies>=5){
+            killedEnemies = 0;
+            maxEnemies++;
+        }
     }
     // Update is called once per frame
     void Update()

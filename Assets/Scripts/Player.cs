@@ -23,13 +23,12 @@ public class Player : MonoBehaviour
     private float fireRate;
     private float meeleAttackRate;
     private Camera MainCamera;
-    private IronOre ironOre;
+    private PowerUp powerUp;
     private Enemy enemy;
     private float damage;
     private Weapon weapon;
     private int R_type = 0;
     private int H_type = 2;
-    private int D_type = 1;
     public bool learnable = true;
     private playerUI pui;
     private healthbar healthbarx;
@@ -69,7 +68,7 @@ public class Player : MonoBehaviour
     private void attributeSet()
     {
         speed = 1f;
-        health = 100f;
+        health = 20f;
         irons = 10;
         damage = 5;
         pui.updateIron(irons);
@@ -87,11 +86,11 @@ public class Player : MonoBehaviour
         weapon = Weapon.Bow;
         MainCamera = Camera.main;
         healthbarx = transform.GetChild(1).gameObject.GetComponent<healthbar>();
-        healthbarx.setHealth(health, 100);
+        healthbarx.setHealth(health, 20);
         pui = GameObject.Find("UI").gameObject.GetComponent<playerUI>();
         MainCamera.enabled = true;
         enemy = null;
-        ironOre = null;
+        powerUp = null;
     }
     private void resetMovement()
     {
@@ -109,16 +108,11 @@ public class Player : MonoBehaviour
     }
     private void HarvestCHeck()
     {
-        if (Input.GetKey(KeyCode.E) && ironOre != null)
+        if (Input.GetKey(KeyCode.E) && powerUp != null)
         {
             if (meeleAttackRate <= 0)
             {
-                ironOre.hurt(damage);
-                if (ironOre.getHardness() <= 0)
-                {
-                    Destroy(ironOre.gameObject);
-                    ironOre = null;
-                }
+                powerUp.hurt(damage);
                 meeleAttackRate = 0.25f;
             }
         }
@@ -134,6 +128,7 @@ public class Player : MonoBehaviour
                 float angle = AngleBetweenTwoPoints(positionOnScreen, mouseOnScreen);
                 GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.Euler(new Vector3(0f, 0f, angle)));
                 bullet.GetComponent<Rigidbody2D>().AddForce((MainCamera.ScreenToWorldPoint(Input.mousePosition) - transform.position) * 300);
+                bullet.GetComponent<Bullet>().setDamage(2);
                 fireRate = 0.2f;
             }
             else if (weapon == Weapon.Block && blockCreateRate <= 0)
@@ -198,7 +193,7 @@ public class Player : MonoBehaviour
     public void hurt(float damageRecieved)
     {
         health -= damageRecieved;
-        healthbarx.setHealth(health, 100);
+        healthbarx.setHealth(health, 20);
 
     }
     private void OnCollisionEnter2D(Collision2D other)
@@ -209,9 +204,9 @@ public class Player : MonoBehaviour
             Destroy(other.gameObject);
             pui.updateIron(irons);
         }
-        else if (other.gameObject.GetComponent<IronOre>() != null)
+        else if (other.gameObject.GetComponent<PowerUp>() != null)
         {
-            ironOre = other.gameObject.GetComponent<IronOre>();
+            powerUp = other.gameObject.GetComponent<PowerUp>();
         }
         else if (other.gameObject.GetComponent<Enemy>() != null)
         {
@@ -220,9 +215,9 @@ public class Player : MonoBehaviour
     }
     private void OnCollisionExit2D(Collision2D other)
     {
-        if (other.gameObject.GetComponent<IronOre>() != null)
+        if (other.gameObject.GetComponent<PowerUp>() != null)
         {
-            ironOre = null;
+            powerUp = null;
         }
         else if (other.gameObject.GetComponent<Enemy>() != null)
         {
@@ -239,10 +234,6 @@ public class Player : MonoBehaviour
         else if (action == Action.Recieve)
         {
             return R_type * 5;
-        }
-        else if (action == Action.Dodge)
-        {
-            return D_type * 5;
         }
         return 0;
     }

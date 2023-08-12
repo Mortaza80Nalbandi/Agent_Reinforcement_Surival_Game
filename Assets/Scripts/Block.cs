@@ -7,7 +7,6 @@ public class Block : MonoBehaviour
     private float hardness = 40;
     private int R_type = 0;
     private int H_type = 2;
-    private int D_type = 1;
     public bool learnable = true;
     public void damage(float damage)
     {
@@ -32,10 +31,6 @@ public class Block : MonoBehaviour
         else if (action == Action.Recieve)
         {
             return R_type * 5;
-        }
-        else if (action == Action.Dodge)
-        {
-            return D_type * 5;
         }
         return 0;
     }
