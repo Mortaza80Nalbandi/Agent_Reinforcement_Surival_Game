@@ -16,7 +16,7 @@ public class Iron : MonoBehaviour
     private int H_type = -2;
     private float S_type = -0.5f;
     private ObjectSpawner objectSpawner ;
-    private States lastState;
+    private List<States> lastStates= new List<States>();
     private int irons = 1 ;
     public void destroy()
     {
@@ -28,14 +28,14 @@ public class Iron : MonoBehaviour
     }
     public void hit()
     {
-        lastState= state;
+         lastStates.Add(state);
         if(state == States.S0){
             state = States.Bad;
         }
         stateConfigure(state);
     }
     public int Recieve(){
-        lastState = state
+         lastStates.Add(state);
         if(state == States.S0){
             state = States.Good;
         }
@@ -47,7 +47,8 @@ public class Iron : MonoBehaviour
     }
     public void undone()
     {
-        stateConfigure(lastState)
+        stateConfigure(lastStates.[lastState.Count-1]);
+        lastStates.Remove(lastState.Count-1);
     }
     private void stateConfigure(State newState){
         if( newState == States.Bad || newState == States.Good){
@@ -63,7 +64,7 @@ public class Iron : MonoBehaviour
         else if (action == Action.Recieve)
         {
             return R_type * 5;
-        }else if (action == null)
+        }else if (action == Action.Stun)
         {
             return S_type * 5;
         }

@@ -19,7 +19,7 @@ public class PowerUp : MonoBehaviour
     private int Multiplier;
     private ObjectSpawner objectSpawner;
     private States state;
-    private States lastState;
+    private List<States> lastStates= new List<States>();
     void Start()
     {
         state = States.S0;
@@ -30,7 +30,7 @@ public class PowerUp : MonoBehaviour
 
     public void hit()
     {
-        lastState= state;
+        lastStates.Add(state);
         if(state == States.S0){
             state = States.S1;
         }else if(state == States.S1){
@@ -39,7 +39,7 @@ public class PowerUp : MonoBehaviour
         stateConfigure(state);
     }
     public int Recieve(){
-        lastState = state
+        lastStates.Add(state);
         if(state == States.S0){
             state = States.Good;
         }else if(state == States.S1){
@@ -53,20 +53,21 @@ public class PowerUp : MonoBehaviour
     }
     public void undone()
     {
-        stateConfigure(lastState)
+        stateConfigure(lastStates.[lastState.Count-1]);
+        lastStates.Remove(lastState.Count-1);
     }
     private void stateConfigure(State newState){
-        if(newState == States.S1){
-            H_type = -2;
-            R_type = 4;
-            Multiplier = 3;
-            locked = false;
-        }else if(newState != States.Good){
+        if(newState == States.S0){
             H_type = -1;
             R_type = 2;
             Multiplier = 2;
             locked = true;
-        } else if( newState == States.Bad || newState == States.Good){
+        }else if(newState == States.S1){
+            H_type = -2;
+            R_type = 4;
+            Multiplier = 3;
+            locked = false;
+        }else if( newState == States.Bad || newState == States.Good){
             Destroy(gameObject);
         }
     }
@@ -79,7 +80,7 @@ public class PowerUp : MonoBehaviour
         else if (action == Action.Recieve)
         {
             return R_type * 5;
-        }else if (action == null)
+        }else if (action == Action.Stun)
         {
             return S_type * 5;
         }

@@ -12,38 +12,39 @@ public class Block : MonoBehaviour
         Null
     }
     private float hardness = 40;
-    private int R_type = -1;
+    private int R_type = -2;
     private float H_type = 1.8f;
     private float S_type = -0.5f;
     private States state;
-    private States lastState;
+    private List<States> lastStates= new List<States>();
     public float getHardness()
     {
         return hardness;
     }
     public void hit(float damage)
     {
-        lastState= state;
+        lastStates.Add(state);
         if(state == States.S0){
-            state = States.Good;
-        }else if(state == States.Good){
-            state = States.Good;
+            state = States.S1;
+        }else if(state == States.S1){
+            state = States.S1;
         }
         hardness -= damage;
         if (hardness <= 0)
         {
-            st
+            Destroy(gameObject)
         }
         
         stateConfigure(state);
     }
-    public int Recieve(){
-        lastState = state
+    public float Recieve(){
+        lastStates.Add(state);
         if(state == States.S0){
-            state = States.Good;
+            state = States.Bad;
         }
         stateConfigure(state);
-        return irons;
+        float x = 0.5f; 
+        return x;
     }
 
     public void stun(){
@@ -51,10 +52,17 @@ public class Block : MonoBehaviour
     }
     public void undone()
     {
-        stateConfigure(lastState)
+        stateConfigure(lastStates.[lastState.Count-1]);
+        lastStates.Remove(lastState.Count-1);
     }
     private void stateConfigure(State newState){
-        if( newState == States.Bad || newState == States.Good){
+        if(newState ==States.S0){
+            R_type = -2;
+            H_type = 1.8f;
+            S_type = -0.5f;
+        }else if(newState == States.S1){
+             H_type = -0.2f;
+        }else if( newState == States.Bad ){
             Destroy(gameObject);
         }
     }
@@ -67,7 +75,7 @@ public class Block : MonoBehaviour
         else if (action == Action.Recieve)
         {
             return R_type * 5;
-        }else if (action == null)
+        }else if (action == Action.Stun)
         {
             return S_type * 5;
         }

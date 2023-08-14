@@ -287,7 +287,7 @@ public class Enemy : MonoBehaviour
                 }
                 if(!RecursiveLearning(actionArray,go,obstacle,cost+reward))
                 return false;
-            unactionManager(obstacle,go,actionArray[actionArray.Count-1]);
+            unactionManager(obstacle,go);
             }
             actionArray.RemoveAt(actionArray.Count-1);
         }
@@ -425,19 +425,21 @@ public class Enemy : MonoBehaviour
             Destroy(go);
         }
     }
-    private void unactionManager(Obstacle obstacle, GameObject go, Action action)
+    private void unactionManager(Obstacle obstacle, GameObject go)
     {
-        if (action == Action.Hit)
-        {
-            if (obstacle == Obstacle.PowerUp)
-        {
-            powerUp = go.GetComponent<PowerUp>(); 
-            powerUp.unhurt();
+
+        if (obstacle == Obstacle.PowerUp){
+            go.GetComponent<PowerUp>().unddone();
         }
-        }
-        else if (action == Action.Recieve)
+        else if (obstacle == Obstacle.Block)
         {
-            //sssssssssssssssssss
+            go.GetComponent<Block>().unddone(); 
+        }else if (obstacle == Obstacle.Player)
+        {
+            go.GetComponent<Player>().unddone(); 
+        }else if (obstacle == Obstacle.Iron)
+        {
+            go.GetComponent<Iron>().unddone(); 
         }
     }
 }

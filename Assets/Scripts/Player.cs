@@ -12,7 +12,14 @@ public class Player : MonoBehaviour
         Meele,
         Block
     }
-
+    enum States
+    {
+        S0,
+        S1,
+        S2,
+        S3,
+        Null
+    }
     public float health;
     private float speed;
     private int up, down, left, right;
@@ -27,12 +34,15 @@ public class Player : MonoBehaviour
     private Enemy enemy;
     private float damage;
     private Weapon weapon;
-    private int R_type = 0;
-    private int H_type = 2;
-    public bool learnable = true;
+    private float R_type = 0;
+    private float H_type = 1;
+    private float S_type = 1;
+    public bool Stuned = false;
     private playerUI pui;
     private healthbar healthbarx;
     private int score;
+    private States state;
+    private List<States> lastStates= new List<States>();
     void Start()
     {
         resetMovement();
@@ -190,12 +200,7 @@ public class Player : MonoBehaviour
         }
 
     }
-    public void hurt(float damageRecieved)
-    {
-        health -= damageRecieved;
-        healthbarx.setHealth(health, 20);
-
-    }
+    
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.GetComponent<Iron>() != null)
@@ -224,7 +229,55 @@ public class Player : MonoBehaviour
             enemy = null;
         }
     }
+    public void hit(float damageRecieved)
+    {
+        lastStates.Add(state);
+        if(state == States.S0||state == States.S2||state == States.S3){
+            state = States.S1;
+        }
+        health -= damageRecieved;
+        healthbarx.setHealth(health, 20);
+        stateConfigure(state);
+    }
+    public int Recieve(){
+        lastStates.Add(state);
+        if(state == States.S0||state == States.S2||state == States.S3){
+            state = States.S3;
+        }
+        stateConfigure(state);
+        int x = 0;if(irons>=1){
+            irons++;
+        }
+        return x;
+    }
 
+    public void stun(){
+        
+        lastStates.Add(state);
+        if(state == States.S0||state == States.S2||state == States.S3){
+            state = States.S2;
+        }
+        Stuned = true;
+        state = state;
+    }
+    public void undone()
+    {
+        stateConfigure(lastStates.[lastState.Count-1]);
+        lastStates.Remove(lastState.Count-1);
+    }
+    private void stateConfigure(State newState){
+        if( newState == States.S0){
+            R_type = 0;
+            H_type = 1;
+            S_type = 1;
+        }else if( newState == States.S1){
+            H_type = -0.2f;
+        }else if( newState == States.S2){
+            S_type = -2;
+        }else if( newState == States.S3){
+            R_type = -2;
+        }
+    }
     public int costCalculator(Action action)
     {
         if (action == Action.Hit)
@@ -234,6 +287,9 @@ public class Player : MonoBehaviour
         else if (action == Action.Recieve)
         {
             return R_type * 5;
+        }else if (action == Action.Stun)
+        {
+            return S_type * 5;
         }
         return 0;
     }

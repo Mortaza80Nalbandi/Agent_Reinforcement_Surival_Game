@@ -4,7 +4,7 @@ namespace Actions
     {
         Hit,
         Recieve,
-        stun,
+        Stun,
         Null
     }
 }
