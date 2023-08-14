@@ -29,6 +29,7 @@ public class Player : MonoBehaviour
     private float blockCreateRate;
     private float fireRate;
     private float meeleAttackRate;
+     private float unStunRate;
     private Camera MainCamera;
     private PowerUp powerUp;
     private Enemy enemy;
@@ -57,9 +58,13 @@ public class Player : MonoBehaviour
         blockCreateRate -= Time.deltaTime;
         fireRate -= Time.deltaTime;
         meeleAttackRate -= Time.deltaTime;
+        unStunRate-= Time.deltaTime;
         if (health <= 0)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+        if(unStunRate<=0){
+            Stuned = false;
         }
     }
     private void FixedUpdate()
@@ -111,10 +116,12 @@ public class Player : MonoBehaviour
     }
     private void GetInput()
     {
-        weaponWheel();
-        movementInput();
-        HarvestCHeck();
-        fireButton();
+        if(!Stuned){
+            weaponWheel();
+            movementInput();
+            HarvestCHeck();
+            fireButton();
+        }
     }
     private void HarvestCHeck()
     {
@@ -122,9 +129,18 @@ public class Player : MonoBehaviour
         {
             if (meeleAttackRate <= 0)
             {
-                powerUp.hurt();
+                powerUp.hit();
                 meeleAttackRate = 0.25f;
-            }
+            } 
+        } else if (Input.GetKey(KeyCode.R) && powerUp != null)
+        {
+            int q = powerUp.Recieve();
+            health= health*q;
+            damage = damage*q;
+        }
+        if(powerUp!=null){
+            if(powerUp.getDestroyed())
+                powerUp = null;
         }
     }
     private void fireButton()
@@ -252,20 +268,20 @@ public class Player : MonoBehaviour
     }
 
     public void stun(){
-        
         lastStates.Add(state);
         if(state == States.S0||state == States.S2||state == States.S3){
             state = States.S2;
         }
         Stuned = true;
+        unStunRate = 0.25f;
         state = state;
     }
     public void undone()
     {
-        stateConfigure(lastStates.[lastState.Count-1]);
-        lastStates.Remove(lastState.Count-1);
+        stateConfigure(lastStates[lastStates.Count-1]);
+        lastStates.RemoveAt(lastStates.Count-1);
     }
-    private void stateConfigure(State newState){
+    private void stateConfigure(States newState){
         if( newState == States.S0){
             R_type = 0;
             H_type = 1;
@@ -278,7 +294,7 @@ public class Player : MonoBehaviour
             R_type = -2;
         }
     }
-    public int costCalculator(Action action)
+    public float costCalculator(Action action)
     {
         if (action == Action.Hit)
         {

@@ -27,7 +27,9 @@ public class PowerUp : MonoBehaviour
         locked = true;
         objectSpawner =GameObject.Find("ObjectSpawner").GetComponent<ObjectSpawner>();
     }
-
+    public bool getDestroyed(){
+        return (state == States.Bad || state == States.Good);
+    }
     public void hit()
     {
         lastStates.Add(state);
@@ -49,14 +51,15 @@ public class PowerUp : MonoBehaviour
         return Multiplier;
     }
     public void stun(){
-        state = state;
+        lastStates.Add(state);
     }
     public void undone()
-    {
-        stateConfigure(lastStates.[lastState.Count-1]);
-        lastStates.Remove(lastState.Count-1);
+    {   
+        stateConfigure(lastStates[lastStates.Count-1]);
+        state = lastStates[lastStates.Count-1];
+        lastStates.RemoveAt(lastStates.Count-1);
     }
-    private void stateConfigure(State newState){
+    private void stateConfigure(States newState){
         if(newState == States.S0){
             H_type = -1;
             R_type = 2;
@@ -67,8 +70,11 @@ public class PowerUp : MonoBehaviour
             R_type = 4;
             Multiplier = 3;
             locked = false;
-        }else if( newState == States.Bad || newState == States.Good){
+        }else if( newState == States.Bad){
+            Multiplier = 1;
             Destroy(gameObject);
+        }else if(newState == States.Good){
+             Destroy(gameObject);
         }
     }
     public float costCalculator(Action action)

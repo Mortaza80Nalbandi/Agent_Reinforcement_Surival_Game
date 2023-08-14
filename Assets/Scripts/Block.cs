@@ -32,7 +32,7 @@ public class Block : MonoBehaviour
         hardness -= damage;
         if (hardness <= 0)
         {
-            Destroy(gameObject)
+            Destroy(gameObject);
         }
         
         stateConfigure(state);
@@ -48,14 +48,16 @@ public class Block : MonoBehaviour
     }
 
     public void stun(){
+        lastStates.Add(state);
         state = state;
     }
     public void undone()
     {
-        stateConfigure(lastStates.[lastState.Count-1]);
-        lastStates.Remove(lastState.Count-1);
+        stateConfigure(lastStates[lastStates.Count-1]);
+        print(lastStates.Count-1);
+        lastStates.RemoveAt(lastStates.Count-1);
     }
-    private void stateConfigure(State newState){
+    private void stateConfigure(States newState){
         if(newState ==States.S0){
             R_type = -2;
             H_type = 1.8f;

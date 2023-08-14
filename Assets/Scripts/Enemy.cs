@@ -11,12 +11,12 @@ public class Enemy : MonoBehaviour
         Player,
         Iron,
         Block,
-        Bullet,
         PowerUp,
         Null
     }
 
     public float health;
+    public float maxHealth;
     private float shield;
     private float speed;
 
@@ -38,21 +38,22 @@ public class Enemy : MonoBehaviour
     private EnemySpawn enemySpawn;
     private LearnUI learnUI;
     private Dictionary<Obstacle,List<Action>> bestAction = new Dictionary<Obstacle,List<Action>>();
-    private Dictionary<Obstacle, Dictionary<List<Action>, int>> actionsLearnt = new Dictionary<Obstacle, Dictionary<List<Action>, int>>();
+    private Dictionary<Obstacle, Dictionary<List<Action>, float>> actionsLearnt = new Dictionary<Obstacle, Dictionary<List<Action>, float>>();
     private Action[] actions;
     void Start()
     {
         attributeSet();
         EntitySet();
-        actions = new Action[2];
+        actions = new Action[3];
         actions[0] = Action.Hit;
         actions[1] = Action.Recieve;
-
+        actions[2] = Action.Stun;
     }
 
     private void attributeSet()
     {
         health = 10f;
+        maxHealth=10f;
         shield = 10f;
         speed = 0.02f;
         damage = 5;
@@ -68,7 +69,7 @@ public class Enemy : MonoBehaviour
         healthbarx = transform.GetChild(0).gameObject.GetComponent<healthbar>();
         sheildbar = transform.GetChild(1).gameObject.GetComponent<healthbar>();
         learnUI = transform.GetChild(2).gameObject.GetComponent<LearnUI>();
-        healthbarx.setHealth(health, 10);
+        healthbarx.setHealth(health, maxHealth);
         sheildbar.setHealth(shield, 10);
         rnd = new Random();
         powerUp = null;
@@ -98,10 +99,10 @@ public class Enemy : MonoBehaviour
     }
     private void ironManage()
     {
-        if (irons > 5 && shield <= 50)
+        if (irons > 5 && shield <= 5)
         {
             shield = 100f;
-            sheildbar.setHealth(shield, 100);
+            sheildbar.setHealth(shield, 10);
             irons -= 5;
         }
         else if (irons > 5)
@@ -117,7 +118,7 @@ public class Enemy : MonoBehaviour
             if (shield <= 0)
             {
             health -= damageRecieved;
-            healthbarx.setHealth(health, 10f);
+            healthbarx.setHealth(health, maxHealth);
             }
             else
             {
@@ -135,7 +136,7 @@ public class Enemy : MonoBehaviour
         {
             if (attackRate <= 0)
             {
-                player.hurt(damage);
+                player.hit(damage);
                 attackRate = 3;
             }
         }     
@@ -145,12 +146,12 @@ public class Enemy : MonoBehaviour
             {
                 if (block.getHardness() <= damage)
                 {
-                    block.damage(damage);
+                    block.hit(damage);
                     block = null;
                 }
                 else
                 {
-                    block.damage(damage);
+                    block.hit(damage);
                 }
 
                 attackRate = 1;
@@ -205,10 +206,7 @@ public class Enemy : MonoBehaviour
 
     private List<Action> costSetter(Obstacle obstacle, GameObject go)
     {
-        foreach (var action in bestAction) 
-            {
-                print(action.Key);
-            }
+
         if (bestAction.ContainsKey(obstacle))
         {
             string y = "";
@@ -230,22 +228,23 @@ public class Enemy : MonoBehaviour
     {
         if (!actionsLearnt.ContainsKey(obstacle))
         {
-            Dictionary<List<Action>, int> x = new Dictionary<List<Action>, int>();
+            Dictionary<List<Action>, float> x = new Dictionary<List<Action>, float>();
             actionsLearnt.Add(obstacle, x);
         }
          
         List<Action> actionArray = new List<Action>();
         if(RecursiveLearning(actionArray,go,obstacle,0)){
             List<Action> Best = new List<Action>();
-            int bestReward=0;
+            float bestReward=0;
             foreach(var a in actionsLearnt[obstacle]) {
-                if(a.Value > bestReward)
+                if(a.Value > bestReward){
                     Best = a.Key;
                     bestReward = a.Value;
+                }
             }
             bestAction.Add(obstacle,Best);
             actionManagerArray(obstacle,go,Best);
-            print("ddddddd");
+
         }
             
        string f = "1\n";
@@ -262,33 +261,46 @@ public class Enemy : MonoBehaviour
         List<Action> y = new List<Action>();
         return y;
     }
-    private bool RecursiveLearning(List<Action> actionArray,GameObject go,Obstacle obstacle,int reward){
-        if(actionArray.Count==3){
-            return true;
-        }
+    private bool RecursiveLearning(List<Action> actionArray,GameObject go,Obstacle obstacle,float reward){
+       
         foreach (Action action in actions)
         {
-            if(checkEquals(actionArray,obstacle))
-                if(checkReward(actionArray,obstacle))
-                    return true;
+            
             actionArray.Add(action);
-            int cost = 0;
+            float cost = Learn(obstacle, go, actionArray,reward);
+            string f = "22 \n";
+            foreach(Action a in actionArray){
+                f+=a;
+                f+="->";
+            }
+            f=f+"r: "+(cost+reward)+ "      ";  
+            print(f);
+            actionManager(obstacle,go,actionArray[actionArray.Count-1]);
             if (!checkEquals(actionArray,obstacle))
             {
-                cost = Learn(obstacle, go, actionArray,reward);
-                actionManager(obstacle,go,actionArray[actionArray.Count-1]);
-                if (cost <=-1*Threshhold){
-                    actionsLearnt[obstacle].Add(actionArray,-10);
+                if(!checkReward(actionArray,obstacle,cost+reward)){
+                    
+                    if (cost <=-1*Threshhold){
+                        actionsLearnt[obstacle].Add(actionArray,-10);
+                        return false;
+                    }
+                    else if(cost >=Threshhold){
+                        actionsLearnt[obstacle].Add(actionArray,cost+reward);
                     return false;
+                    }else if(actionArray.Count == 3){
+                        List<Action> actionArrayTemp = new List<Action>();
+                        foreach (Action temp in actionArray) 
+                        {
+                            actionArrayTemp.Add(temp);
+                        }    
+                        actionsLearnt[obstacle].Add(actionArrayTemp,cost+reward);
+                    }
+                    if(actionArray.Count<=2) 
+                        if(!RecursiveLearning(actionArray,go,obstacle,cost+reward))
+                            return false;
                 }
-                else if(cost >=Threshhold){
-                    actionsLearnt[obstacle].Add(actionArray,cost+reward);
-                    return false;
-                }
-                if(!RecursiveLearning(actionArray,go,obstacle,cost+reward))
-                return false;
-            unactionManager(obstacle,go);
             }
+            unactionManager(obstacle,go);
             actionArray.RemoveAt(actionArray.Count-1);
         }
         return true;
@@ -308,7 +320,7 @@ public class Enemy : MonoBehaviour
         } 
         return false;
     }
-    private bool checkReward(List<Action> actionArray,Obstacle obstacle){
+    private bool checkReward(List<Action> actionArray,Obstacle obstacle,float x){
         foreach (var action in actionsLearnt[obstacle]){
             List<Action> z = action.Key;
             int i=0;
@@ -319,18 +331,24 @@ public class Enemy : MonoBehaviour
                     i+=1;
                 }
                 if(i== actionArray.Count&& i!=0)
-                    if(action.Value<=-1*Threshhold || action.Value>=Threshhold)   
+                    if(action.Value == x)   
                         return true;    
         } 
         return false;
     }
-    private int Learn(Obstacle obstacle, GameObject go, List<Action> actions, int reward)
+    private float Learn(Obstacle obstacle, GameObject go, List<Action> actions, float reward)
     {
-        int cost = 0;
+        float cost = 0;
         if (obstacle == Obstacle.Block)
         {
+            string y = "";
+            foreach (Action action in actions) 
+            {
+                y+=action;
+                y+="->";
+            }
             cost = go.GetComponent<Block>().costCalculator(actions[0]);
-            learnUI.addText("Learning about " + obstacle + " ,Action List :" + actions + "Result = " + (cost+reward));
+            learnUI.addText("Learning about " + obstacle + " ,Action List :" + y + "Result = " + (cost+reward));
             return cost;
 
         }
@@ -374,6 +392,9 @@ public class Enemy : MonoBehaviour
         else if (action == Action.Recieve)
         {
             RecieveManager(obstacle, go);
+        }else if (action == Action.Stun)
+        {
+            stunManager(obstacle, go);
         }
     }
     private void hitManager(Obstacle obstacle, GameObject go)
@@ -386,19 +407,15 @@ public class Enemy : MonoBehaviour
         {
             attackBlock = true;
             block = go.GetComponent<Block>();
-            block.damage(damage);
+            block.hit(damage);
         }
         else if (obstacle == Obstacle.Iron)
         {
-            go.GetComponent<Iron>().destroy();
-        }
-        else if (obstacle == Obstacle.Bullet)
-        {
-            //NOTHING IS DONE here
+            go.GetComponent<Iron>().hit();
         }else if (obstacle == Obstacle.PowerUp)
         {
             powerUp = go.GetComponent<PowerUp>(); 
-            powerUp.hurt();
+            powerUp.hit();
         }
     }
     private void RecieveManager(Obstacle obstacle, GameObject go)
@@ -419,27 +436,47 @@ public class Enemy : MonoBehaviour
         else if (obstacle == Obstacle.PowerUp)
         {
             //aaaaaaaaaaaaaaaaaaaaaaaaa
-            int q = go.GetComponent<PowerUp>().RewardMulti();
+            int q = go.GetComponent<PowerUp>().Recieve();
             health= health*q;
             damage = damage*q;
-            Destroy(go);
+            maxHealth = maxHealth*q;
+        }
+    }
+    private void stunManager(Obstacle obstacle, GameObject go)
+    {
+        if (obstacle == Obstacle.Player)
+        {
+            player.stun();
+        }
+        else if (obstacle == Obstacle.Block)
+        {
+            block = go.GetComponent<Block>();
+            block.stun();
+        }
+        else if (obstacle == Obstacle.Iron)
+        {
+            go.GetComponent<Iron>().stun();
+        }else if (obstacle == Obstacle.PowerUp)
+        {
+            powerUp = go.GetComponent<PowerUp>(); 
+            powerUp.stun();
         }
     }
     private void unactionManager(Obstacle obstacle, GameObject go)
     {
 
         if (obstacle == Obstacle.PowerUp){
-            go.GetComponent<PowerUp>().unddone();
+            go.GetComponent<PowerUp>().undone();
         }
         else if (obstacle == Obstacle.Block)
         {
-            go.GetComponent<Block>().unddone(); 
+            go.GetComponent<Block>().undone(); 
         }else if (obstacle == Obstacle.Player)
         {
-            go.GetComponent<Player>().unddone(); 
+            go.GetComponent<Player>().undone(); 
         }else if (obstacle == Obstacle.Iron)
         {
-            go.GetComponent<Iron>().unddone(); 
+            go.GetComponent<Iron>().undone(); 
         }
     }
 }

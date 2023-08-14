@@ -16,12 +16,12 @@ public class Iron : MonoBehaviour
     private int H_type = -2;
     private float S_type = -0.5f;
     private ObjectSpawner objectSpawner ;
+    private States state;
     private List<States> lastStates= new List<States>();
     private int irons = 1 ;
     public void destroy()
     {
         objectSpawner = GameObject.Find("ObjectSpawner").GetComponent<ObjectSpawner>();
-        learnable = false;
         Destroy(gameObject);
         objectSpawner.decreaseIrons();
         
@@ -43,14 +43,15 @@ public class Iron : MonoBehaviour
         return irons;
     }
     public void stun(){
+        lastStates.Add(state);
         state = state;
     }
     public void undone()
     {
-        stateConfigure(lastStates.[lastState.Count-1]);
-        lastStates.Remove(lastState.Count-1);
+        stateConfigure(lastStates[lastStates.Count-1]);
+        lastStates.RemoveAt(lastStates.Count-1);
     }
-    private void stateConfigure(State newState){
+    private void stateConfigure(States newState){
         if( newState == States.Bad || newState == States.Good){
             Destroy(gameObject);
         }
