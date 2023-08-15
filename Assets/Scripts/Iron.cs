@@ -49,6 +49,7 @@ public class Iron : MonoBehaviour
     public void undone()
     {
         stateConfigure(lastStates[lastStates.Count-1]);
+        state =lastStates[lastStates.Count-1];
         lastStates.RemoveAt(lastStates.Count-1);
     }
     private void stateConfigure(States newState){

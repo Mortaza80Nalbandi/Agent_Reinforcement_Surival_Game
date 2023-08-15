@@ -12,10 +12,10 @@ public class Block : MonoBehaviour
         Null
     }
     private float hardness = 40;
-    private int R_type = -2;
-    private float H_type = 1.8f;
+    private float R_type = -2;
+    private float H_type = 1;
     private float S_type = -0.5f;
-    private States state;
+    private States state = States.S0;
     private List<States> lastStates= new List<States>();
     public float getHardness()
     {
@@ -24,46 +24,43 @@ public class Block : MonoBehaviour
     public void hit(float damage)
     {
         lastStates.Add(state);
-        if(state == States.S0){
-            state = States.S1;
-        }else if(state == States.S1){
+        if(state == States.S0 ||state == States.S1){
             state = States.S1;
         }
         hardness -= damage;
         if (hardness <= 0)
         {
+            state = States.Bad;
             Destroy(gameObject);
         }
-        
         stateConfigure(state);
     }
     public float Recieve(){
         lastStates.Add(state);
-        if(state == States.S0){
+        if(state == States.S0 || state == States.S1){
             state = States.Bad;
         }
         stateConfigure(state);
-        float x = 0.5f; 
+        float x = 0.75f; 
         return x;
     }
 
     public void stun(){
         lastStates.Add(state);
-        state = state;
     }
     public void undone()
     {
         stateConfigure(lastStates[lastStates.Count-1]);
-        print(lastStates.Count-1);
+        state =lastStates[lastStates.Count-1];
         lastStates.RemoveAt(lastStates.Count-1);
     }
     private void stateConfigure(States newState){
         if(newState ==States.S0){
             R_type = -2;
-            H_type = 1.8f;
+            H_type = 1;
             S_type = -0.5f;
         }else if(newState == States.S1){
-             H_type = -0.2f;
+             H_type = 1;
         }else if( newState == States.Bad ){
             Destroy(gameObject);
         }

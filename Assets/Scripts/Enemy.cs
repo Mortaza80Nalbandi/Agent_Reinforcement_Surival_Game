@@ -18,12 +18,13 @@ public class Enemy : MonoBehaviour
     public float health;
     public float maxHealth;
     private float shield;
-    private float speed;
+    public float speed;
 
     public float damage;
     private bool attack;
     private bool attackBlock;
     private float attackRate;
+    private float blockSlowdownRate;
     private int irons;
     private int deathScore;
     private int Threshhold=10;
@@ -56,8 +57,9 @@ public class Enemy : MonoBehaviour
         maxHealth=10f;
         shield = 10f;
         speed = 0.02f;
-        damage = 5;
+        damage = 1;
         attackRate = 3;
+        blockSlowdownRate = -2;
         irons = 0;
         deathScore = 5;
     }
@@ -80,6 +82,7 @@ public class Enemy : MonoBehaviour
         target = player.gameObject.transform;
         attackCheck();
         attackRate -= Time.deltaTime;
+        blockSlowdownRate-= Time.deltaTime;
         if (health <= 0)
         {
             player.updateScore(deathScore);
@@ -89,6 +92,9 @@ public class Enemy : MonoBehaviour
         if (irons >= 5)
         {
             ironManage();
+        }
+        if(blockSlowdownRate<=0){
+            speed =0.02f;
         }
 
     }
@@ -275,11 +281,11 @@ public class Enemy : MonoBehaviour
             }
             f=f+"r: "+(cost+reward)+ "      ";  
             print(f);
-            actionManager(obstacle,go,actionArray[actionArray.Count-1]);
+            
             if (!checkEquals(actionArray,obstacle))
             {
                 if(!checkReward(actionArray,obstacle,cost+reward)){
-                    
+                    actionManager(obstacle,go,actionArray[actionArray.Count-1]);
                     if (cost <=-1*Threshhold){
                         actionsLearnt[obstacle].Add(actionArray,-10);
                         return false;
@@ -298,9 +304,11 @@ public class Enemy : MonoBehaviour
                     if(actionArray.Count<=2) 
                         if(!RecursiveLearning(actionArray,go,obstacle,cost+reward))
                             return false;
+                    unactionManager(obstacle,go);
+                    
                 }
             }
-            unactionManager(obstacle,go);
+            
             actionArray.RemoveAt(actionArray.Count-1);
         }
         return true;
@@ -347,21 +355,33 @@ public class Enemy : MonoBehaviour
                 y+=action;
                 y+="->";
             }
-            cost = go.GetComponent<Block>().costCalculator(actions[0]);
+            cost = go.GetComponent<Block>().costCalculator(actions[actions.Count-1]);
             learnUI.addText("Learning about " + obstacle + " ,Action List :" + y + "Result = " + (cost+reward));
             return cost;
 
         }
         else if (obstacle == Obstacle.Player)
         {
-            cost = go.GetComponent<Player>().costCalculator(actions[0]);
-            learnUI.addText("Learning about " + obstacle + " ,Action List :" + actions + "Result = " + (cost+reward));
+            string y = "";
+            foreach (Action action in actions) 
+            {
+                y+=action;
+                y+="->";
+            }
+            cost = go.GetComponent<Player>().costCalculator(actions[actions.Count-1]);
+            learnUI.addText("Learning about " + obstacle + " ,Action List :" + y + "Result = " + (cost+reward));
             return cost;
         }
         else if (obstacle == Obstacle.Iron)
         {
-            cost = go.GetComponent<Iron>().costCalculator(actions[0]);
-            learnUI.addText("Learning about " + obstacle + " ,Action List :" + actions + "Result = " + (cost+reward));
+            string y = "";
+            foreach (Action action in actions) 
+            {
+                y+=action;
+                y+="->";
+            }
+            cost = go.GetComponent<Iron>().costCalculator(actions[actions.Count-1]);
+            learnUI.addText("Learning about " + obstacle + " ,Action List :" + y + "Result = " + (cost+reward));
             return cost;
         }else if (obstacle == Obstacle.PowerUp)
         {
@@ -378,6 +398,21 @@ public class Enemy : MonoBehaviour
         return cost;
     }
     private void actionManagerArray(Obstacle obstacle, GameObject go, List<Action> actionss){
+
+        Action temp = Action.Null;
+        if(actionss.Count >=1)
+            temp = actionss[0];
+        bool flag = true;
+        foreach(Action action in actionss){
+            if(action != temp){
+                flag = false;
+                break;
+            }
+            
+        }
+        if(flag){
+            actionManager(obstacle,go,temp);
+        }
         foreach(Action action in actionss){
             actionManager(obstacle,go,action);
         }
@@ -402,6 +437,7 @@ public class Enemy : MonoBehaviour
         if (obstacle == Obstacle.Player)
         {
             attack = true;
+             player.hit(damage);
         }
         else if (obstacle == Obstacle.Block)
         {
@@ -422,11 +458,14 @@ public class Enemy : MonoBehaviour
     {
         if (obstacle == Obstacle.Player)
         {
-            //NOTHING IS DONE here
+            int x = player.Recieve();
+            irons+=x;
         }
         else if (obstacle == Obstacle.Block)
         {
-            //NOTHING IS DONE here
+            float y = go.GetComponent<Block>().Recieve();
+            speed = speed * y;
+            blockSlowdownRate = 3;
         }
         else if (obstacle == Obstacle.Iron)
         {
@@ -435,7 +474,6 @@ public class Enemy : MonoBehaviour
         }
         else if (obstacle == Obstacle.PowerUp)
         {
-            //aaaaaaaaaaaaaaaaaaaaaaaaa
             int q = go.GetComponent<PowerUp>().Recieve();
             health= health*q;
             damage = damage*q;

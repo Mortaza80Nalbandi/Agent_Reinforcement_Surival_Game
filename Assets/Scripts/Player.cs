@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
         Null
     }
     public float health;
+    public float maxHealth;
     private float speed;
     private int up, down, left, right;
     public int irons;
@@ -35,9 +36,9 @@ public class Player : MonoBehaviour
     private Enemy enemy;
     private float damage;
     private Weapon weapon;
-    private float R_type = 0;
-    private float H_type = 1;
-    private float S_type = 1;
+    private float R_type = 1;
+    private float H_type = 0.8f;
+    private float S_type = 0.8f;
     public bool Stuned = false;
     private playerUI pui;
     private healthbar healthbarx;
@@ -83,7 +84,8 @@ public class Player : MonoBehaviour
     private void attributeSet()
     {
         speed = 1f;
-        health = 20f;
+        health = 1000f;
+        maxHealth = 1000f;
         irons = 10;
         damage = 5;
         pui.updateIron(irons);
@@ -101,7 +103,7 @@ public class Player : MonoBehaviour
         weapon = Weapon.Bow;
         MainCamera = Camera.main;
         healthbarx = transform.GetChild(1).gameObject.GetComponent<healthbar>();
-        healthbarx.setHealth(health, 20);
+        healthbarx.setHealth(health, maxHealth);
         pui = GameObject.Find("UI").gameObject.GetComponent<playerUI>();
         MainCamera.enabled = true;
         enemy = null;
@@ -137,6 +139,7 @@ public class Player : MonoBehaviour
             int q = powerUp.Recieve();
             health= health*q;
             damage = damage*q;
+            maxHealth = maxHealth*q;
         }
         if(powerUp!=null){
             if(powerUp.getDestroyed())
@@ -243,6 +246,8 @@ public class Player : MonoBehaviour
         else if (other.gameObject.GetComponent<Enemy>() != null)
         {
             enemy = null;
+            state = States.S0;
+            stateConfigure(state);
         }
     }
     public void hit(float damageRecieved)
@@ -251,8 +256,11 @@ public class Player : MonoBehaviour
         if(state == States.S0||state == States.S2||state == States.S3){
             state = States.S1;
         }
-        health -= damageRecieved;
-        healthbarx.setHealth(health, 20);
+        if(Stuned)
+            health -= 2*damageRecieved;
+        else
+            health -= damageRecieved;
+        healthbarx.setHealth(health, maxHealth);
         stateConfigure(state);
     }
     public int Recieve(){
@@ -261,8 +269,10 @@ public class Player : MonoBehaviour
             state = States.S3;
         }
         stateConfigure(state);
-        int x = 0;if(irons>=1){
-            irons++;
+        int x = 0;
+        if(irons>=1){
+            irons--;
+            x=1;
         }
         return x;
     }
@@ -271,27 +281,32 @@ public class Player : MonoBehaviour
         lastStates.Add(state);
         if(state == States.S0||state == States.S2||state == States.S3){
             state = States.S2;
+        }if(S_type!= -2){
+            Stuned = true;
         }
-        Stuned = true;
         unStunRate = 0.25f;
-        state = state;
+        stateConfigure(state);
     }
     public void undone()
     {
+
         stateConfigure(lastStates[lastStates.Count-1]);
+        state =lastStates[lastStates.Count-1];
         lastStates.RemoveAt(lastStates.Count-1);
     }
     private void stateConfigure(States newState){
         if( newState == States.S0){
-            R_type = 0;
-            H_type = 1;
-            S_type = 1;
+            R_type = 1;
+            H_type = 0.8f;
+            S_type = 0.8f;
         }else if( newState == States.S1){
             H_type = -0.2f;
         }else if( newState == States.S2){
-            S_type = -2;
+            S_type = -1.8f;
+            H_type = 1.4f;
         }else if( newState == States.S3){
-            R_type = -2;
+            R_type = -1.8f;
+            S_type = 1.2f;
         }
     }
     public float costCalculator(Action action)
