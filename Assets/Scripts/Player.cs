@@ -273,6 +273,7 @@ public class Player : MonoBehaviour
         if(irons>=1){
             irons--;
             x=1;
+            pui.updateIron(irons);
         }
         return x;
     }
@@ -284,7 +285,7 @@ public class Player : MonoBehaviour
         }if(S_type!= -2){
             Stuned = true;
         }
-        unStunRate = 0.25f;
+        unStunRate = 1f;
         stateConfigure(state);
     }
     public void undone()

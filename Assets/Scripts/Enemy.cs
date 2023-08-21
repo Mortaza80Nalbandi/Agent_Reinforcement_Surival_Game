@@ -50,11 +50,11 @@ public class Enemy : MonoBehaviour
         actions[0] = Action.Hit;
         actions[1] = Action.Recieve;
         actions[2] = Action.Stun;
-        learnUI.addText(ID);
+        learnUI.UpdateID(ID);
     }
     public void setID(int id){
         ID = id;
-        learnUI.addText(ID);
+        learnUI.UpdateID(ID);
     }
     private void attributeSet()
     {

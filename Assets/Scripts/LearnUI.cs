@@ -11,7 +11,7 @@ public class LearnUI : MonoBehaviour
     {
         text.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position + Offset);
     }
-    public void addText(int id)
+    public void UpdateID(int id)
     {
         text.text = "Enemy "+id;
     }

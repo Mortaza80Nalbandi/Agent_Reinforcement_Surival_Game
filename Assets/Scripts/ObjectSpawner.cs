@@ -17,9 +17,9 @@ public class ObjectSpawner : MonoBehaviour
     private int powerUps;
     void Start()
     {
-        powerUps=0;
-        irons=0;
-        rate = 10;
+        powerUps = 0;
+        irons = 0;
+        rate = 6;
         xLowerband = -24;
         xHigherband = 24;
         yLowerband = -24;
@@ -30,28 +30,32 @@ public class ObjectSpawner : MonoBehaviour
     {
         if (rate <= 0)
         {
-            if(powerUps<=3){
+            if (powerUps <= 3)
+            {
                 int x = rnd.Next(xLowerband, xHigherband);
                 int y = rnd.Next(yLowerband, yHigherband);
                 Vector3 spawnPos = new Vector3(x, y, 0);
                 Instantiate(PUPrefab, spawnPos, Quaternion.identity);
                 powerUps++;
             }
-            if(irons<=8){
+            if (irons <= 8)
+            {
                 int x = rnd.Next(xLowerband, xHigherband);
                 int y = rnd.Next(yLowerband, yHigherband);
                 Vector3 spawnPos = new Vector3(x, y, 0);
                 Instantiate(IronPrefab, spawnPos, Quaternion.identity);
                 irons++;
             }
-            rate = 10;
+            rate = 6;
         }
         rate -= Time.deltaTime;
     }
-    public void decreaseIrons(){
+    public void decreaseIrons()
+    {
         irons--;
     }
-    public void decreasePowerUps(){
+    public void decreasePowerUps()
+    {
         powerUps--;
     }
 }

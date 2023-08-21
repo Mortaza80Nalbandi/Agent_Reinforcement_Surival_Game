@@ -22,9 +22,8 @@ public class Iron : MonoBehaviour
     public void destroy()
     {
         objectSpawner = GameObject.Find("ObjectSpawner").GetComponent<ObjectSpawner>();
-        Destroy(gameObject);
         objectSpawner.decreaseIrons();
-
+        Destroy(gameObject);
     }
     public void hit()
     {
