@@ -5,6 +5,7 @@ using Random = System.Random;
 public class EnemySpawn : MonoBehaviour
 {
     private float rate;
+    private float rateConstant;
     private Random rnd;
     private int enemies;
     private int killedEnemies;
@@ -18,7 +19,8 @@ public class EnemySpawn : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rate =5 ;
+        rateConstant = 3;
+        rate = rateConstant;
         enemies = 1;
         xLowerband = -24;
         xHigherband = 24;
@@ -26,15 +28,17 @@ public class EnemySpawn : MonoBehaviour
         yHigherband = 24;
         maxEnemies = -5;
         killedEnemies = 0;
-;        rnd = new Random();
+        rnd = new Random();
     }
     public void decreaseEnemies()
     {
         enemies--;
         killedEnemies++;
-        if(killedEnemies>=5){
+        if (killedEnemies >= 5)
+        {
             killedEnemies = 0;
             maxEnemies++;
+            ratePeriod -= 0.2;
         }
     }
     // Update is called once per frame
@@ -46,9 +50,9 @@ public class EnemySpawn : MonoBehaviour
             int x = rnd.Next(xLowerband, xHigherband);
             int y = rnd.Next(yLowerband, yHigherband);
             Vector3 spawnPos = new Vector3(x, y, 0);
-            clone=  Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+            clone = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
             clone.GetComponent<Enemy>().setID(enemies);
-            rate = 2;
+            rate = rateConstant;
             enemies++;
         }
         rate -= Time.deltaTime;
