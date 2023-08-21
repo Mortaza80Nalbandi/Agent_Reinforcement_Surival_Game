@@ -28,7 +28,8 @@ public class Enemy : MonoBehaviour
     private int irons;
     private int deathScore;
     private int Threshhold=10;
-
+    private int ID = 0;
+    private playerUI pui;
     private Random rnd;
     private Block block;
     private PowerUp powerUp;
@@ -49,8 +50,12 @@ public class Enemy : MonoBehaviour
         actions[0] = Action.Hit;
         actions[1] = Action.Recieve;
         actions[2] = Action.Stun;
+        learnUI.addText(ID);
     }
-
+    public void setID(int id){
+        ID = id;
+        learnUI.addText(ID);
+    }
     private void attributeSet()
     {
         health = 10f;
@@ -67,6 +72,7 @@ public class Enemy : MonoBehaviour
     {
         player = GameObject.Find("Player").GetComponent<Player>();
         enemySpawn = GameObject.Find("EnemySpawn").GetComponent<EnemySpawn>();
+        pui = GameObject.Find("UI").gameObject.GetComponent<playerUI>();
         target = player.gameObject.transform;
         healthbarx = transform.GetChild(0).gameObject.GetComponent<healthbar>();
         sheildbar = transform.GetChild(1).gameObject.GetComponent<healthbar>();
@@ -132,8 +138,6 @@ public class Enemy : MonoBehaviour
             sheildbar.setHealth(shield, 10f);
             }
         }
-        else
-            learnUI.addText("Dodged attack");
         
     }
     private void attackCheck()
@@ -161,7 +165,6 @@ public class Enemy : MonoBehaviour
                 }
 
                 attackRate = 1;
-                learnUI.addText("block attack");
             }
         }
     }
@@ -221,7 +224,7 @@ public class Enemy : MonoBehaviour
                 y+=action;
                 y+="->";
             }
-            learnUI.addText("bast Action about" + obstacle + "Action List :" + y);
+            pui.addText("Enemy "+ID+" => bast Action about" + obstacle + "Action List :" + y);
             return bestAction[obstacle];
         }
         else
@@ -288,10 +291,12 @@ public class Enemy : MonoBehaviour
                     actionManager(obstacle,go,actionArray[actionArray.Count-1]);
                     if (cost <=-1*Threshhold){
                         actionsLearnt[obstacle].Add(actionArray,-10);
+                        printUIofLearning(actionArray,obstacle,cost+reward);
                         return false;
                     }
                     else if(cost >=Threshhold){
                         actionsLearnt[obstacle].Add(actionArray,cost+reward);
+                        printUIofLearning(actionArray,obstacle,cost+reward);
                     return false;
                     }else if(actionArray.Count == 3){
                         List<Action> actionArrayTemp = new List<Action>();
@@ -299,6 +304,7 @@ public class Enemy : MonoBehaviour
                         {
                             actionArrayTemp.Add(temp);
                         }    
+                        printUIofLearning(actionArray,obstacle,cost+reward);
                         actionsLearnt[obstacle].Add(actionArrayTemp,cost+reward);
                     }
                     if(actionArray.Count<=2) 
@@ -323,10 +329,20 @@ public class Enemy : MonoBehaviour
                         break;
                     i+=1;
                 }
+
                 if(i== actionArray.Count&& i!=0)
                     return true;       
         } 
         return false;
+    }
+    private void printUIofLearning(List<Action> actionss,Obstacle obstacle,float cost){
+        string y = "";
+            foreach (Action action in actionss) 
+            {
+                y+=action;
+                y+="->";
+            }
+            pui.addText("Enemy "+ID+" => Learning about " + obstacle + " ,Action List :" + y + "Result = " + cost);
     }
     private bool checkReward(List<Action> actionArray,Obstacle obstacle,float x){
         foreach (var action in actionsLearnt[obstacle]){
@@ -349,50 +365,23 @@ public class Enemy : MonoBehaviour
         float cost = 0;
         if (obstacle == Obstacle.Block)
         {
-            string y = "";
-            foreach (Action action in actions) 
-            {
-                y+=action;
-                y+="->";
-            }
+            
             cost = go.GetComponent<Block>().costCalculator(actions[actions.Count-1]);
-            learnUI.addText("Learning about " + obstacle + " ,Action List :" + y + "Result = " + (cost+reward));
             return cost;
 
         }
         else if (obstacle == Obstacle.Player)
         {
-            string y = "";
-            foreach (Action action in actions) 
-            {
-                y+=action;
-                y+="->";
-            }
             cost = go.GetComponent<Player>().costCalculator(actions[actions.Count-1]);
-            learnUI.addText("Learning about " + obstacle + " ,Action List :" + y + "Result = " + (cost+reward));
             return cost;
         }
         else if (obstacle == Obstacle.Iron)
         {
-            string y = "";
-            foreach (Action action in actions) 
-            {
-                y+=action;
-                y+="->";
-            }
             cost = go.GetComponent<Iron>().costCalculator(actions[actions.Count-1]);
-            learnUI.addText("Learning about " + obstacle + " ,Action List :" + y + "Result = " + (cost+reward));
             return cost;
         }else if (obstacle == Obstacle.PowerUp)
         {
-            string y = "";
-            foreach (Action action in actions) 
-            {
-                y+=action;
-                y+="->";
-            }
             cost = go.GetComponent<PowerUp>().costCalculator(actions[actions.Count-1]);
-            learnUI.addText("Learning about " + obstacle + " ,Action List :" + y + "Result = " + (cost+reward));
             return cost;
         }
         return cost;

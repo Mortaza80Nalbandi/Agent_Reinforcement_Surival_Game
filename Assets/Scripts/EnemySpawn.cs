@@ -42,10 +42,12 @@ public class EnemySpawn : MonoBehaviour
     {
         if (rate <= 0 && enemies <= maxEnemies)
         {
+            GameObject clone;
             int x = rnd.Next(xLowerband, xHigherband);
             int y = rnd.Next(yLowerband, yHigherband);
             Vector3 spawnPos = new Vector3(x, y, 0);
-            Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+            clone=  Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+            clone.GetComponent<Enemy>().setID(enemies);
             rate = 2;
             enemies++;
         }

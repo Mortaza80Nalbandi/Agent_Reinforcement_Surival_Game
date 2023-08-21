@@ -7,7 +7,7 @@ public class Block : MonoBehaviour
     enum States
     {
         Bad,
-        S0 ,
+        S0,
         S1,
         Null
     }
@@ -16,7 +16,7 @@ public class Block : MonoBehaviour
     private float H_type = 1;
     private float S_type = -0.5f;
     private States state = States.S0;
-    private List<States> lastStates= new List<States>();
+    private List<States> lastStates = new List<States>();
     public float getHardness()
     {
         return hardness;
@@ -24,7 +24,8 @@ public class Block : MonoBehaviour
     public void hit(float damage)
     {
         lastStates.Add(state);
-        if(state == States.S0 ||state == States.S1){
+        if (state == States.S0 || state == States.S1)
+        {
             state = States.S1;
         }
         hardness -= damage;
@@ -35,33 +36,42 @@ public class Block : MonoBehaviour
         }
         stateConfigure(state);
     }
-    public float Recieve(){
+    public float Recieve()
+    {
         lastStates.Add(state);
-        if(state == States.S0 || state == States.S1){
+        if (state == States.S0 || state == States.S1)
+        {
             state = States.Bad;
         }
         stateConfigure(state);
-        float x = 0.75f; 
+        float x = 0.75f;
         return x;
     }
 
-    public void stun(){
+    public void stun()
+    {
         lastStates.Add(state);
     }
     public void undone()
     {
-        stateConfigure(lastStates[lastStates.Count-1]);
-        state =lastStates[lastStates.Count-1];
-        lastStates.RemoveAt(lastStates.Count-1);
+        stateConfigure(lastStates[lastStates.Count - 1]);
+        state = lastStates[lastStates.Count - 1];
+        lastStates.RemoveAt(lastStates.Count - 1);
     }
-    private void stateConfigure(States newState){
-        if(newState ==States.S0){
+    private void stateConfigure(States newState)
+    {
+        if (newState == States.S0)
+        {
             R_type = -2;
             H_type = 1;
             S_type = -0.5f;
-        }else if(newState == States.S1){
-             H_type = 1;
-        }else if( newState == States.Bad ){
+        }
+        else if (newState == States.S1)
+        {
+            H_type = 1;
+        }
+        else if (newState == States.Bad)
+        {
             Destroy(gameObject);
         }
     }
@@ -74,7 +84,8 @@ public class Block : MonoBehaviour
         else if (action == Action.Recieve)
         {
             return R_type * 5;
-        }else if (action == Action.Stun)
+        }
+        else if (action == Action.Stun)
         {
             return S_type * 5;
         }
