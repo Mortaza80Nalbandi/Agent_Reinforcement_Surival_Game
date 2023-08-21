@@ -26,7 +26,7 @@ public class EnemySpawn : MonoBehaviour
         xHigherband = 24;
         yLowerband = -24;
         yHigherband = 24;
-        maxEnemies = -5;
+        maxEnemies = 5;
         killedEnemies = 0;
         rnd = new Random();
     }
@@ -36,9 +36,10 @@ public class EnemySpawn : MonoBehaviour
         killedEnemies++;
         if (killedEnemies >= 5)
         {
+            print("aaa");
             killedEnemies = 0;
             maxEnemies++;
-            if (rateConstant >= 0.5)
+            if (rateConstant >= 0.6)
             {
                 rateConstant -= 0.2f;
             }
@@ -47,17 +48,20 @@ public class EnemySpawn : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (rate <= 0 && enemies <= maxEnemies)
-        {
+        if(rate>=0){
+            rate -= Time.deltaTime;
+            if (rate <= 0 && enemies <= maxEnemies)
+            {
+            print(rateConstant + " " + enemies+" "+ maxEnemies+" ");
             GameObject clone;
             int x = rnd.Next(xLowerband, xHigherband);
             int y = rnd.Next(yLowerband, yHigherband);
-            Vector3 spawnPos = new Vector3(x, y, 0);
-            clone = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
-            clone.GetComponent<Enemy>().setID(enemies);
-            rate = rateConstant;
-            enemies++;
+                Vector3 spawnPos = new Vector3(x, y, 0);
+                clone = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+                clone.GetComponent<Enemy>().setID(enemies);
+                rate = rateConstant;
+                enemies++;
+            }
         }
-        rate -= Time.deltaTime;
     }
 }
