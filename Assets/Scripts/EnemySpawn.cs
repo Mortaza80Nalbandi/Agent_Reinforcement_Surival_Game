@@ -38,7 +38,10 @@ public class EnemySpawn : MonoBehaviour
         {
             killedEnemies = 0;
             maxEnemies++;
-            ratePeriod -= 0.2;
+            if (rateConstant >= 0.5)
+            {
+                rateConstant -= 0.2f;
+            }
         }
     }
     // Update is called once per frame

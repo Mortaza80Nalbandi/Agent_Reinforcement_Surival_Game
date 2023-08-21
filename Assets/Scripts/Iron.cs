@@ -9,51 +9,57 @@ public class Iron : MonoBehaviour
     {
         Good,
         Bad,
-        S0 ,
+        S0,
         Null
     }
     private int R_type = 2;
     private int H_type = -2;
     private float S_type = -0.5f;
-    private ObjectSpawner objectSpawner ;
+    private ObjectSpawner objectSpawner;
     private States state;
-    private List<States> lastStates= new List<States>();
-    private int irons = 1 ;
+    private List<States> lastStates = new List<States>();
+    private int irons = 1;
     public void destroy()
     {
         objectSpawner = GameObject.Find("ObjectSpawner").GetComponent<ObjectSpawner>();
         Destroy(gameObject);
         objectSpawner.decreaseIrons();
-        
+
     }
     public void hit()
     {
-         lastStates.Add(state);
-        if(state == States.S0){
+        lastStates.Add(state);
+        if (state == States.S0)
+        {
             state = States.Bad;
         }
         stateConfigure(state);
     }
-    public int Recieve(){
-         lastStates.Add(state);
-        if(state == States.S0){
+    public int Recieve()
+    {
+        lastStates.Add(state);
+        if (state == States.S0)
+        {
             state = States.Good;
         }
         stateConfigure(state);
         return irons;
     }
-    public void stun(){
+    public void stun()
+    {
         lastStates.Add(state);
         state = state;
     }
     public void undone()
     {
-        stateConfigure(lastStates[lastStates.Count-1]);
-        state =lastStates[lastStates.Count-1];
-        lastStates.RemoveAt(lastStates.Count-1);
+        stateConfigure(lastStates[lastStates.Count - 1]);
+        state = lastStates[lastStates.Count - 1];
+        lastStates.RemoveAt(lastStates.Count - 1);
     }
-    private void stateConfigure(States newState){
-        if( newState == States.Bad || newState == States.Good){
+    private void stateConfigure(States newState)
+    {
+        if (newState == States.Bad || newState == States.Good)
+        {
             Destroy(gameObject);
         }
     }
@@ -66,7 +72,8 @@ public class Iron : MonoBehaviour
         else if (action == Action.Recieve)
         {
             return R_type * 5;
-        }else if (action == Action.Stun)
+        }
+        else if (action == Action.Stun)
         {
             return S_type * 5;
         }
