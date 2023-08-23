@@ -11,7 +11,7 @@ public class Block : MonoBehaviour
         S1,
         Null
     }
-    private float hardness = 40;
+    public float hardness = 20;
     private float R_type = -2;
     private float H_type = 1;
     private float S_type = -0.5f;

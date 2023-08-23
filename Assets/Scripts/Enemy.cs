@@ -193,7 +193,12 @@ public class Enemy : MonoBehaviour
             actionss = costSetter(Obstacle.PowerUp, other.gameObject);
 
         }
-        actionManagerArray(obstacle, other.gameObject, actionss);
+        if (other.gameObject.GetComponent<Enemy>() == null)
+        {
+            actionManagerArray(obstacle, other.gameObject, actionss);
+
+        }
+        
 
     }
 
@@ -256,9 +261,17 @@ public class Enemy : MonoBehaviour
                     bestReward = a.Value;
                 }
             }
+            string y = "";
+            foreach (Action action in Best)
+            {
+                y += action;
+                y += "->";
+            }
+            pui.addText("Enemy " + ID + " =>Learn Complete bast Action about" + obstacle + "Action List :" + y);
             bestAction.Add(obstacle, Best);
             actionManagerArray(obstacle, go, Best);
-
+            if(obstacle == Obstacle.Player)
+                damage*=3;
         }
 
         string f = "1\n";
@@ -273,8 +286,8 @@ public class Enemy : MonoBehaviour
             f = f + "r: " + action.Value + "      ";
         }
         print(f);
-        List<Action> y = new List<Action>();
-        return y;
+        List<Action> zzz = new List<Action>();
+        return zzz;
     }
     private bool RecursiveLearning(List<Action> actionArray, GameObject go, Obstacle obstacle, float reward)
     {
@@ -459,7 +472,7 @@ public class Enemy : MonoBehaviour
         {
             attackBlock = true;
             block = go.GetComponent<Block>();
-            block.hit(damage);
+            block.hit(5);
         }
         else if (obstacle == Obstacle.Iron)
         {
@@ -491,7 +504,7 @@ public class Enemy : MonoBehaviour
         }
         else if (obstacle == Obstacle.PowerUp)
         {
-            int q = go.GetComponent<PowerUp>().Recieve();
+            float q = go.GetComponent<PowerUp>().Recieve();
             health = health * q;
             damage = damage * q;
             maxHealth = maxHealth * q;
@@ -537,5 +550,17 @@ public class Enemy : MonoBehaviour
         {
             go.GetComponent<Iron>().undone();
         }
+    }
+    public bool LevelValidator(int level){
+            if(level ==1){
+                if(bestAction.ContainsKey(Obstacle.Block))
+                return true;
+            }else if(level ==2){
+                if(bestAction.ContainsKey(Obstacle.PowerUp) && actionsLearnt.ContainsKey(Obstacle.Iron))
+                    return true;
+            }if(level ==3){
+                return true;
+            }
+            return false;
     }
 }

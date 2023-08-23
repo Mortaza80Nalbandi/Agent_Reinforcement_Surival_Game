@@ -16,14 +16,14 @@ public class PowerUp : MonoBehaviour
     private int H_type = -1;
     private float S_type = -0.5f;
     private bool locked;
-    private int Multiplier;
+    private float Multiplier;
     private ObjectSpawner objectSpawner;
     private States state;
     private List<States> lastStates = new List<States>();
     void Start()
     {
         state = States.S0;
-        Multiplier = 2;
+        Multiplier = 1.2f;
         locked = true;
         objectSpawner = GameObject.Find("ObjectSpawner").GetComponent<ObjectSpawner>();
     }
@@ -34,7 +34,7 @@ public class PowerUp : MonoBehaviour
     public void hit()
     {
         lastStates.Add(state);
-        if (state == States.S0)
+        if (state == States.S0 && locked == true)
         {
             state = States.S1;
         }
@@ -44,7 +44,7 @@ public class PowerUp : MonoBehaviour
         }
         stateConfigure(state);
     }
-    public int Recieve()
+    public float Recieve()
     {
         lastStates.Add(state);
         if (state == States.S0)
@@ -74,14 +74,14 @@ public class PowerUp : MonoBehaviour
         {
             H_type = -1;
             R_type = 2;
-            Multiplier = 2;
+            Multiplier = 1.2f;
             locked = true;
         }
         else if (newState == States.S1)
         {
             H_type = -2;
             R_type = 4;
-            Multiplier = 3;
+            Multiplier = 1.5f;
             locked = false;
         }
         else if (newState == States.Bad)

@@ -18,7 +18,7 @@ public class Iron : MonoBehaviour
     private ObjectSpawner objectSpawner;
     private States state;
     private List<States> lastStates = new List<States>();
-    private int irons = 1;
+    private int irons = 5;
     public void destroy()
     {
         objectSpawner = GameObject.Find("ObjectSpawner").GetComponent<ObjectSpawner>();
@@ -47,7 +47,6 @@ public class Iron : MonoBehaviour
     public void stun()
     {
         lastStates.Add(state);
-        state = state;
     }
     public void undone()
     {

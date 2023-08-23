@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
     private Camera MainCamera;
     private PowerUp powerUp;
     private Enemy enemy;
-    private float damage;
+    public float damage;
     private Weapon weapon;
     private float R_type = 1;
     private float H_type = 0.8f;
@@ -62,7 +62,7 @@ public class Player : MonoBehaviour
         unStunRate -= Time.deltaTime;
         if (health <= 0)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            SceneManager.LoadScene(0);
         }
         if (unStunRate <= 0)
         {
@@ -85,8 +85,8 @@ public class Player : MonoBehaviour
     private void attributeSet()
     {
         speed = 1f;
-        health = 1000f;
-        maxHealth = 1000f;
+        maxHealth = 100f;
+        health = maxHealth;
         irons = 10;
         damage = 5;
         pui.updateIron(irons);
@@ -139,7 +139,7 @@ public class Player : MonoBehaviour
         }
         else if (Input.GetKey(KeyCode.R) && powerUp != null)
         {
-            int q = powerUp.Recieve();
+            float q = powerUp.Recieve();
             health = health * q;
             damage = damage * q;
             maxHealth = maxHealth * q;
@@ -161,7 +161,7 @@ public class Player : MonoBehaviour
                 float angle = AngleBetweenTwoPoints(positionOnScreen, mouseOnScreen);
                 GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.Euler(new Vector3(0f, 0f, angle)));
                 bullet.GetComponent<Rigidbody2D>().AddForce((MainCamera.ScreenToWorldPoint(Input.mousePosition) - transform.position) * 300);
-                bullet.GetComponent<Bullet>().setDamage(2);
+                bullet.GetComponent<Bullet>().setDamage(damage/2);
                 fireRate = 0.2f;
             }
             else if (weapon == Weapon.Block && blockCreateRate <= 0)
@@ -228,8 +228,7 @@ public class Player : MonoBehaviour
     {
         if (other.gameObject.GetComponent<Iron>() != null)
         {
-            irons++;
-            Destroy(other.gameObject);
+            irons+=other.gameObject.GetComponent<Iron>().Recieve();
             pui.updateIron(irons);
         }
         else if (other.gameObject.GetComponent<PowerUp>() != null)
