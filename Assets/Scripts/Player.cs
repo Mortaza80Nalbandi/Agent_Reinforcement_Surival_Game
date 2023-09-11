@@ -20,28 +20,28 @@ public class Player : MonoBehaviour
         S3,
         Null
     }
-    public float health;
-    public float maxHealth;
+    private float health;
+    private float maxHealth;
     private float speed;
     private int up, down, left, right;
-    public int irons;
+    private int irons;
     public GameObject blockPrefab;
     public GameObject bulletPrefab;
     private float blockCreateRate;
     private float fireRate;
     private float meeleAttackRate;
     private float unStunRate;
+    private float healRate;
     private Camera MainCamera;
     private PowerUp powerUp;
     private Enemy enemy;
-    public float damage;
+    private float damage;
     private Weapon weapon;
     private float R_type = 1;
     private float H_type = 0.8f;
     private float S_type = 0.8f;
-    public bool Stuned = false;
+    private bool Stuned = false;
     private playerUI pui;
-    private healthbar healthbarx;
     private int score;
     private States state;
     private List<States> lastStates = new List<States>();
@@ -60,13 +60,24 @@ public class Player : MonoBehaviour
         fireRate -= Time.deltaTime;
         meeleAttackRate -= Time.deltaTime;
         unStunRate -= Time.deltaTime;
+        healRate -=Time.deltaTime;
         if (health <= 0)
         {
+            int level =  GameObject.Find("LevelObjectives").GetComponent<Level>().getLevel();
+            if(level==4)
+                GameObject.Find("HighestScore").gameObject.GetComponent<HighestScore>().sethighestScore(score);
             SceneManager.LoadScene(0);
         }
         if (unStunRate <= 0)
         {
             Stuned = false;
+        }
+        if(healRate<=0){
+            if(health<maxHealth){
+                health+=1;
+                pui.updateHealth(health,maxHealth);
+            }
+            healRate=3;
         }
     }
     private void FixedUpdate()
@@ -84,12 +95,14 @@ public class Player : MonoBehaviour
     }
     private void attributeSet()
     {
-        speed = 1f;
+        speed = 3f;
         maxHealth = 100f;
         health = maxHealth;
+        pui.updateHealth(health,maxHealth);
         irons = 10;
-        damage = 5;
         pui.updateIron(irons);
+        damage = 5;
+        pui.updateAttack(damage);
         score = 0;
         pui.updateScore(score);
     }
@@ -98,13 +111,12 @@ public class Player : MonoBehaviour
         blockCreateRate = 0.5f;
         fireRate = 0.2f;
         meeleAttackRate = 0.25f;
+        healRate = 1;
     }
     private void EntitySet()
     {
         weapon = Weapon.Bow;
         MainCamera = Camera.main;
-        healthbarx = transform.GetChild(1).gameObject.GetComponent<healthbar>();
-        healthbarx.setHealth(health, maxHealth);
         pui = GameObject.Find("UI").gameObject.GetComponent<playerUI>();
         MainCamera.enabled = true;
         enemy = null;
@@ -141,8 +153,10 @@ public class Player : MonoBehaviour
         {
             float q = powerUp.Recieve();
             health = health * q;
-            damage = damage * q;
             maxHealth = maxHealth * q;
+            pui.updateHealth(health,maxHealth);
+            damage = damage * q;
+            pui.updateAttack(damage);
         }
         if (powerUp != null)
         {
@@ -264,7 +278,7 @@ public class Player : MonoBehaviour
             health -= 2 * damageRecieved;
         else
             health -= damageRecieved;
-        healthbarx.setHealth(health, maxHealth);
+        pui.updateHealth(health,maxHealth);
         stateConfigure(state);
     }
     public int Recieve()

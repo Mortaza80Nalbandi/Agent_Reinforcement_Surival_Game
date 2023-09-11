@@ -56,9 +56,15 @@ public class Iron : MonoBehaviour
     }
     private void stateConfigure(States newState)
     {
-        if (newState == States.Bad || newState == States.Good)
+        if (newState == States.S0)
         {
-            Destroy(gameObject);
+             R_type = 2;
+            H_type = -2;
+            S_type = -0.5f;
+        }
+        else if (newState == States.Bad || newState == States.Good)
+        {
+            destroy();
         }
     }
     public float costCalculator(Action action)

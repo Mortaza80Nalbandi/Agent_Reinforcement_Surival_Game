@@ -22,18 +22,20 @@ public class Level : MonoBehaviour
         }else if(level ==4){
              objective = "Objective : Get The Highest score Possible";
         }
+        objective +="\n Controls : Left Click for weapon ,E for modifier, R for Recieve and WASD for movement";
         GameObject.Find("UI").transform.GetChild(5).gameObject.GetComponent<Text>().text = objective;
     }
-    void Update()
+    public int getLevel(){
+        return level;
+    }
+    public void endActivator(bool valid)
     {
         if(level == 1||level == 2||level == 3){
-            if(enemySpawn.getEnemies() == 0){
-                if( GameObject.Find("Enemy").GetComponent<Enemy>().LevelValidator(level)){
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
-                }else {
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-                }
-            }   
+            if( valid){
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+            }else {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            } 
         }         
     }
     // Update is called once per frame

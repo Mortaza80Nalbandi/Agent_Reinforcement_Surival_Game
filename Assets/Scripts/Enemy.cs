@@ -25,7 +25,7 @@ public class Enemy : MonoBehaviour
     private bool attackBlock;
     private float attackRate;
     private float blockSlowdownRate;
-    private int irons;
+    public int irons;
     private int deathScore;
     private int Threshhold = 10;
     private int ID = 0;
@@ -90,6 +90,18 @@ public class Enemy : MonoBehaviour
         blockSlowdownRate -= Time.deltaTime;
         if (health <= 0)
         {
+            int level =  GameObject.Find("LevelObjectives").GetComponent<Level>().getLevel();
+            bool valid = false;
+            if(level ==1){
+                if(bestAction.ContainsKey(Obstacle.Block))
+                    valid = true;
+            }else if(level ==2){
+                if(bestAction.ContainsKey(Obstacle.PowerUp) && actionsLearnt.ContainsKey(Obstacle.Iron))
+                    valid = true;
+            }if(level ==3){
+                valid = true;
+            }
+            GameObject.Find("LevelObjectives").GetComponent<Level>().endActivator(valid);
             player.updateScore(deathScore);
             enemySpawn.decreaseEnemies();
             Destroy(gameObject);
@@ -111,13 +123,13 @@ public class Enemy : MonoBehaviour
     }
     private void ironManage()
     {
-        if (irons > 5 && shield <= 5)
+        if (irons >= 5 && shield <= 5)
         {
-            shield = 100f;
+            shield = 10f;
             sheildbar.setHealth(shield, 10);
             irons -= 5;
         }
-        else if (irons > 5)
+        else if (irons >= 5)
         {
             damage += 5;
             irons -= 5;
@@ -273,19 +285,6 @@ public class Enemy : MonoBehaviour
             if(obstacle == Obstacle.Player)
                 damage*=3;
         }
-
-        string f = "1\n";
-        foreach (var action in actionsLearnt[obstacle])
-        {
-            List<Action> z = action.Key;
-            foreach (Action a in z)
-            {
-                f += a;
-                f += "->";
-            }
-            f = f + "r: " + action.Value + "      ";
-        }
-        print(f);
         List<Action> zzz = new List<Action>();
         return zzz;
     }
@@ -499,8 +498,7 @@ public class Enemy : MonoBehaviour
         }
         else if (obstacle == Obstacle.Iron)
         {
-            irons++;
-            go.GetComponent<Iron>().destroy();
+            irons += go.GetComponent<Iron>().Recieve();
         }
         else if (obstacle == Obstacle.PowerUp)
         {
@@ -550,17 +548,5 @@ public class Enemy : MonoBehaviour
         {
             go.GetComponent<Iron>().undone();
         }
-    }
-    public bool LevelValidator(int level){
-            if(level ==1){
-                if(bestAction.ContainsKey(Obstacle.Block))
-                return true;
-            }else if(level ==2){
-                if(bestAction.ContainsKey(Obstacle.PowerUp) && actionsLearnt.ContainsKey(Obstacle.Iron))
-                    return true;
-            }if(level ==3){
-                return true;
-            }
-            return false;
     }
 }

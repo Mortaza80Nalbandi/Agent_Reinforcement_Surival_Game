@@ -8,7 +8,8 @@ public class playerUI : MonoBehaviour
     Text ironText;
     Text scoreText;
     Text learnText;
-    private int score;
+    Text HealthText;
+    Text attackText;
     Image m_Image;
     public Sprite Bow_Sprite;
     public Sprite Block_Sprite;
@@ -23,6 +24,8 @@ public class playerUI : MonoBehaviour
         scoreText = transform.GetChild(1).gameObject.GetComponent<Text>();
         ironText = transform.GetChild(2).gameObject.GetComponent<Text>();
         learnText = transform.GetChild(4).gameObject.GetComponent<Text>();
+        HealthText = transform.GetChild(7).gameObject.GetComponent<Text>();
+        attackText = transform.GetChild(9).gameObject.GetComponent<Text>();
         printedLinesNumber = 0;
         printedLines = "LearningTracker : \n";
     }
@@ -30,8 +33,7 @@ public class playerUI : MonoBehaviour
     public void updateIron(int irs)
     {
         ironText = transform.GetChild(2).gameObject.GetComponent<Text>();
-        Irons = irs;
-        ironText.text = "" + Irons;
+        ironText.text = "" + irs;
     }
     public void updateWeapon(string wpn)
     {
@@ -48,10 +50,19 @@ public class playerUI : MonoBehaviour
             m_Image.sprite = Block_Sprite;
         }
     }
+    public void updateHealth(float health, float maxhealth)
+    {
+        HealthText = transform.GetChild(7).gameObject.GetComponent<Text>();
+        HealthText.text = "" + health + " / " + maxhealth;
+    }
+    public void updateAttack(float damage)
+    {
+        attackText = transform.GetChild(9).gameObject.GetComponent<Text>();
+        attackText.text = ""+damage;
+    }
     public void updateScore(int score)
     {
         scoreText = transform.GetChild(1).gameObject.GetComponent<Text>();
-        this.score = score;
         scoreText.text = "Score : " + score;
     }
     public void addText(string newComment)

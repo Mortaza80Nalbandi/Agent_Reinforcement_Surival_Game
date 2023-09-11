@@ -9,7 +9,7 @@ public class EnemySpawn : MonoBehaviour
     private Random rnd;
     private int enemies;
     private int killedEnemies;
-    private int maxEnemies;
+    public int maxEnemies;
     private int xLowerband;
     private int yLowerband;
     private int xHigherband;
@@ -34,7 +34,7 @@ public class EnemySpawn : MonoBehaviour
     {
         enemies--;
         killedEnemies++;
-        if (killedEnemies >= maxEnemies)
+        if (killedEnemies >= maxEnemies && maxEnemies!=0)
         {
             killedEnemies = 0;
             maxEnemies++;
