@@ -6,9 +6,9 @@ public class Block : MonoBehaviour
 {
     enum States
     {
-        Bad,
-        S0,
-        S1,
+        Fail,
+        Initial,
+        Goal,
         Null
     }
     public float hardness = 20;
@@ -24,14 +24,14 @@ public class Block : MonoBehaviour
     public void hit(float damage)
     {
         lastStates.Add(state);
-        if (state == States.S0 || state == States.S1)
+        if (state == States.Initial || state == States.Goal)
         {
-            state = States.S1;
+            state = States.Goal;
         }
         hardness -= damage;
         if (hardness <= 0)
         {
-            state = States.Bad;
+            state = States.Fail;
             Destroy(gameObject);
         }
         stateConfigure(state);
@@ -39,9 +39,9 @@ public class Block : MonoBehaviour
     public float Recieve()
     {
         lastStates.Add(state);
-        if (state == States.S0 || state == States.S1)
+        if (state == States.Initial || state == States.Goal)
         {
-            state = States.Bad;
+            state = States.Fail;
         }
         stateConfigure(state);
         float x = 0.75f;
@@ -60,17 +60,17 @@ public class Block : MonoBehaviour
     }
     private void stateConfigure(States newState)
     {
-        if (newState == States.S0)
+        if (newState == States.Initial)
         {
             R_type = -2;
             H_type = 1;
             S_type = -0.5f;
         }
-        else if (newState == States.S1)
+        else if (newState == States.Goal)
         {
             H_type = 1;
         }
-        else if (newState == States.Bad)
+        else if (newState == States.Fail)
         {
             Destroy(gameObject);
         }

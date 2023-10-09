@@ -296,13 +296,8 @@ public class Enemy : MonoBehaviour
 
             actionArray.Add(action);
             float cost = Learn(obstacle, go, actionArray, reward);
-            string f = "22 \n";
-            foreach (Action a in actionArray)
-            {
-                f += a;
-                f += "->";
-            }
-            f = f + "r: " + (cost + reward) + "      ";
+            string f = "action : \n";
+            f = actionArray[actionArray.Count - 1] + "r: " + cost  + "      ";
             print(f);
 
             if (!checkEquals(actionArray, obstacle))
@@ -371,6 +366,7 @@ public class Enemy : MonoBehaviour
             y += action;
             y += "->";
         }
+        print("action : \n" + y + " r: " + cost);
         pui.addText("Enemy " + ID + " => Learning about " + obstacle + " ,Action List :" + y + "Result = " + cost);
     }
     private bool checkReward(List<Action> actionArray, Obstacle obstacle, float x)

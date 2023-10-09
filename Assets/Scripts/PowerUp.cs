@@ -6,10 +6,10 @@ public class PowerUp : MonoBehaviour
 {
     enum States
     {
-        Good,
-        Bad,
-        S0,
-        S1,
+        Goal,
+        Fail,
+        Initial,
+        BrokenLock,
         Null
     }
     private int R_type = 2;
@@ -22,36 +22,36 @@ public class PowerUp : MonoBehaviour
     private List<States> lastStates = new List<States>();
     void Start()
     {
-        state = States.S0;
+        state = States.Initial;
         Multiplier = 1.2f;
         locked = true;
         objectSpawner = GameObject.Find("ObjectSpawner").GetComponent<ObjectSpawner>();
     }
     public bool getDestroyed()
     {
-        return (state == States.Bad || state == States.Good);
+        return (state == States.Fail || state == States.Goal);
     }
     public void hit()
     {
         lastStates.Add(state);
-        if (state == States.S0 && locked == true)
+        if (state == States.Initial && locked == true)
         {
-            state = States.S1;
+            state = States.BrokenLock;
         }
-        else if (state == States.S1)
+        else if (state == States.BrokenLock)
         {
-            state = States.Bad;
+            state = States.Fail;
         }
         stateConfigure(state);
     }
     public float Recieve()
     {
         lastStates.Add(state);
-        if (state == States.S0)
+        if (state == States.Initial)
         {
             state = States.Good;
         }
-        else if (state == States.S1)
+        else if (state == States.BrokenLock)
         {
             state = States.Good;
         }
@@ -70,26 +70,26 @@ public class PowerUp : MonoBehaviour
     }
     private void stateConfigure(States newState)
     {
-        if (newState == States.S0)
+        if (newState == States.Initial)
         {
             H_type = -1;
             R_type = 2;
             Multiplier = 1.2f;
             locked = true;
         }
-        else if (newState == States.S1)
+        else if (newState == States.BrokenLock)
         {
             H_type = -2;
             R_type = 4;
             Multiplier = 1.5f;
             locked = false;
         }
-        else if (newState == States.Bad)
+        else if (newState == States.Fail)
         {
             Multiplier = 1;
             Destroy(gameObject);
         }
-        else if (newState == States.Good)
+        else if (newState == States.Goal)
         {
             Destroy(gameObject);
         }

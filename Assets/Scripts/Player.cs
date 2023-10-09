@@ -14,10 +14,10 @@ public class Player : MonoBehaviour
     }
     enum States
     {
-        S0,
-        S1,
-        S2,
-        S3,
+        Initial,
+        suffer,
+        Stunned,
+        Robbed,
         Null
     }
     private float health;

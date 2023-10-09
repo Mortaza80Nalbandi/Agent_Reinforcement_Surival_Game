@@ -7,16 +7,16 @@ public class Iron : MonoBehaviour
 {
     enum States
     {
-        Good,
-        Bad,
-        S0,
+        Goal,
+        Fail,
+        Initial,
         Null
     }
     private int R_type = 2;
     private int H_type = -2;
     private float S_type = -0.5f;
     private ObjectSpawner objectSpawner;
-    private States state;
+    private States state= States.Initial;
     private List<States> lastStates = new List<States>();
     private int irons = 5;
     public void destroy()
@@ -28,18 +28,18 @@ public class Iron : MonoBehaviour
     public void hit()
     {
         lastStates.Add(state);
-        if (state == States.S0)
+        if (state == States.Initial)
         {
-            state = States.Bad;
+            state = States.Fail;
         }
         stateConfigure(state);
     }
     public int Recieve()
     {
         lastStates.Add(state);
-        if (state == States.S0)
+        if (state == States.Initial)
         {
-            state = States.Good;
+            state = States.Goal;
         }
         stateConfigure(state);
         return irons;
@@ -56,13 +56,13 @@ public class Iron : MonoBehaviour
     }
     private void stateConfigure(States newState)
     {
-        if (newState == States.S0)
+        if (newState == States.Initial)
         {
              R_type = 2;
             H_type = -2;
             S_type = -0.5f;
         }
-        else if (newState == States.Bad || newState == States.Good)
+        else if (newState == States.Fail || newState == States.Goal)
         {
             destroy();
         }
